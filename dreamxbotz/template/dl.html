@@ -1537,7 +1537,7 @@
         let currentMoviesData = [];
 
         function getDirectStreamUrl() {
-            if (fileDirectUrl && !fileDirectUrl.startsWith("{{")) {
+            if (fileDirectUrl && (fileDirectUrl.startsWith("http://") || fileDirectUrl.startsWith("https://"))) {
                 return fileDirectUrl;
             }
             if (window.location.href.includes('/watch/')) {
