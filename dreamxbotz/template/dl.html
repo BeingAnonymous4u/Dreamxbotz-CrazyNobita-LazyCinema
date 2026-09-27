@@ -4,207 +4,2158 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ALL Movies Studio | {{file_name}}</title>
-    <link rel="stylesheet" href="https://unpkg.com/sheryjs/dist/Shery.css" />
-    <link rel="stylesheet" href="https://biisal.github.io/Resources/StreamCSS.css">
-    <link rel="stylesheet" href="https://biisal.github.io/Resources/playerCss.css">
+    <title>˹ мι꯭֟፝ss ᴘʀᴏᴠɪᴅᴇʀ ˼ | Download {{file_name}}</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@500;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"
-        integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohGBreCFkKxLhei6S9CQXFEbbKuqLg0DA=="
-        crossorigin="anonymous" referrerpolicy="no-referrer" />
-    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.plyr.io/3.7.8/plyr.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <script src="https://unpkg.com/lucide@latest"></script>
 
+    <style>
+        :root {
+            --bg-primary: #0a0102;
+            --bg-secondary: #140205;
+            --bg-card: rgba(26, 4, 8, 0.8);
+            --bg-glass: rgba(30, 4, 8, 0.7);
+            --bg-glass-dark: rgba(12, 2, 4, 0.96);
+            --primary-color: #ef4444;
+            --primary-glow: #dc2626;
+            --accent-rose: #f43f5e;
+            --accent-dark-red: #991b1b;
+            --accent-ruby: #e11d48;
+            --accent-emerald: #10b981;
+            --text-primary: #fff1f2;
+            --text-secondary: #fecdd3;
+            --text-muted: rgba(254, 205, 211, 0.65);
+            --border-subtle: rgba(239, 68, 68, 0.16);
+            --border-normal: rgba(239, 68, 68, 0.32);
+            --border-glow: rgba(239, 68, 68, 0.6);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #0a0102 0%, #150205 45%, #25040a 100%);
+            color: var(--text-primary);
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+
+        /* Ambient Glow */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 1000px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(239, 68, 68, 0.12) 0%, transparent 70%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            background: var(--bg-glass-dark);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border-subtle);
+        }
+
+        .header-content {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 1rem 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .logo {
+            font-family: 'Poppins', sans-serif;
+            font-weight: 800;
+            font-size: 1.5rem;
+            background: linear-gradient(90deg, #ef4444, #f43f5e, #dc2626, #b91c1c);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: 1px;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .logo i {
+            -webkit-text-fill-color: #ef4444;
+            font-size: 1.3rem;
+            filter: drop-shadow(0 0 8px rgba(239, 68, 68, 0.6));
+        }
+
+        .menu-icon {
+            font-size: 1.4rem;
+            color: var(--text-primary);
+            cursor: pointer;
+            transition: color 0.3s;
+        }
+
+        .menu-icon:hover {
+            color: var(--primary-color);
+        }
+
+        .menu-overlay {
+            display: none;
+            position: fixed;
+            top: 65px;
+            right: 15px;
+            background: var(--bg-glass-dark);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--border-normal);
+            border-radius: 14px;
+            padding: 10px;
+            z-index: 999;
+            flex-direction: column;
+            width: 220px;
+            box-shadow: 0 10px 35px rgba(0, 0, 0, 0.8), 0 0 15px rgba(239, 68, 68, 0.2);
+        }
+
+        .menu-overlay.active {
+            display: flex;
+            animation: fadeIn 0.2s ease-out;
+        }
+
+        .menu-link {
+            padding: 12px 15px;
+            color: var(--text-primary);
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 500;
+            border-radius: 8px;
+            transition: all 0.2s;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .menu-link i {
+            color: var(--primary-color);
+            width: 18px;
+        }
+
+        .menu-link:hover {
+            background: rgba(239, 68, 68, 0.15);
+            color: var(--primary-color);
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 2rem 1.5rem 3rem;
+            padding-top: 6rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .intro-line {
+            text-align: center;
+            font-size: 1.25rem;
+            margin-bottom: 1.5rem;
+            font-weight: 700;
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(90deg, #f87171, #ef4444, #f43f5e, #dc2626);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 25px rgba(239, 68, 68, 0.3);
+        }
+
+        /* Player Wrapper (visible for videos) */
+        .player-wrapper {
+            display: none;
+            margin-bottom: 1.5rem;
+            border-radius: 18px;
+            overflow: hidden;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-normal);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.7), 0 0 25px rgba(239, 68, 68, 0.15);
+        }
+
+        .video-container {
+            position: relative;
+            width: 100%;
+            padding-bottom: 56.25%;
+            background: #000;
+            overflow: hidden;
+        }
+
+        .video-container video {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        .video-container .plyr {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        /* Direct Download Card */
+        .download-card {
+            background: linear-gradient(135deg, rgba(26, 3, 7, 0.85), rgba(15, 2, 4, 0.95));
+            border: 1px solid var(--border-normal);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5), 0 0 25px rgba(239, 68, 68, 0.12);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .file-header {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            margin-bottom: 25px;
+        }
+
+        .file-icon-box {
+            width: 72px;
+            height: 72px;
+            border-radius: 18px;
+            background: linear-gradient(135deg, rgba(239, 68, 68, 0.25), rgba(153, 27, 27, 0.4));
+            border: 1px solid var(--primary-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            color: var(--primary-color);
+            flex-shrink: 0;
+            box-shadow: 0 10px 25px rgba(239, 68, 68, 0.35);
+        }
+
+        .file-details {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .badge-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-bottom: 8px;
+        }
+
+        .type-badge {
+            background: linear-gradient(135deg, #ef4444, #991b1b);
+            color: #fff;
+            padding: 4px 10px;
+            font-size: 0.72rem;
+            font-weight: 800;
+            border-radius: 6px;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            font-family: 'Poppins', sans-serif;
+            letter-spacing: 0.5px;
+            box-shadow: 0 0 10px rgba(239, 68, 68, 0.3);
+        }
+
+        .size-badge {
+            background: rgba(239, 68, 68, 0.12);
+            border: 1px solid var(--border-normal);
+            color: #f87171;
+            padding: 4px 10px;
+            font-size: 0.72rem;
+            font-weight: 700;
+            border-radius: 6px;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .speed-badge {
+            background: rgba(16, 185, 129, 0.15);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            color: #34d399;
+            padding: 4px 10px;
+            font-size: 0.72rem;
+            font-weight: 700;
+            border-radius: 6px;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .file-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            word-break: break-all;
+            line-height: 1.4;
+            color: var(--text-primary);
+        }
+
+        /* Download Primary Button */
+        .btn-main-download {
+            width: 100%;
+            background: linear-gradient(135deg, #ef4444, #dc2626, #991b1b);
+            color: #fff;
+            font-weight: 800;
+            font-size: 1.05rem;
+            padding: 16px 24px;
+            border-radius: 14px;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            transition: all 0.3s;
+            font-family: 'Poppins', sans-serif;
+            text-decoration: none;
+            box-shadow: 0 10px 30px rgba(239, 68, 68, 0.45);
+            margin-bottom: 15px;
+        }
+
+        .btn-main-download:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 40px rgba(239, 68, 68, 0.65);
+            background: linear-gradient(135deg, #f87171, #ef4444, #dc2626);
+            color: #fff;
+        }
+
+        .action-row {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .btn-secondary {
+            flex: 1;
+            padding: 12px;
+            background: rgba(239, 68, 68, 0.08);
+            border: 1px solid var(--border-normal);
+            border-radius: 12px;
+            color: var(--text-primary);
+            font-weight: 600;
+            font-family: 'Poppins', sans-serif;
+            font-size: 0.85rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: all 0.3s;
+            text-decoration: none;
+            min-width: 90px;
+            white-space: nowrap;
+        }
+
+        .btn-secondary:hover {
+            background: rgba(239, 68, 68, 0.2);
+            border-color: var(--primary-color);
+            color: #fff;
+        }
+
+        .btn-search-trigger {
+            background: linear-gradient(135deg, rgba(225, 29, 72, 0.2), rgba(185, 28, 28, 0.3));
+            border-color: rgba(244, 63, 94, 0.4);
+            color: #fecdd3;
+        }
+
+        /* Tips & Accelerator Box */
+        .tips-box {
+            background: rgba(239, 68, 68, 0.06);
+            border: 1px solid var(--border-subtle);
+            border-radius: 12px;
+            padding: 15px;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            margin-top: 15px;
+        }
+
+        .tips-box i {
+            color: var(--primary-color);
+            font-size: 1.1rem;
+            margin-top: 2px;
+        }
+
+        .ext-player-btn {
+            width: 100%;
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid var(--border-normal);
+            color: #f87171;
+            padding: 12px;
+            border-radius: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            font-family: 'Poppins', sans-serif;
+            transition: all 0.3s;
+            margin-top: 15px;
+        }
+
+        .ext-player-btn:hover {
+            background: rgba(239, 68, 68, 0.2);
+            border-color: var(--primary-color);
+            color: #fff;
+        }
+
+        .external-players-list {
+            display: none;
+            margin-top: 12px;
+            gap: 10px;
+            flex-direction: column;
+        }
+
+        .external-players-list.active {
+            display: flex;
+            animation: slideDown 0.3s ease-out;
+        }
+
+        .ext-option {
+            background: rgba(239, 68, 68, 0.08);
+            padding: 12px;
+            border: 1px solid var(--border-subtle);
+            border-radius: 10px;
+            color: var(--text-primary);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+
+        .ext-option:hover {
+            border-color: var(--primary-color);
+            color: #fff;
+            background: rgba(239, 68, 68, 0.18);
+        }
+
+        /* ========================================================
+           TMDB POPULAR & SEARCH MOVIES SECTION (ABOVE EXPLORE)
+           ======================================================== */
+        .movies-section {
+            margin: 3.5rem 0 2.5rem;
+            background: var(--bg-glass);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-radius: 22px;
+            padding: 28px 24px;
+            border: 1px solid var(--border-normal);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5), 0 0 30px rgba(239, 68, 68, 0.08);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .movies-section-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 14px;
+        }
+
+        .movies-title-box {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .movies-title {
+            font-family: 'Poppins', sans-serif;
+            font-size: 1.4rem;
+            font-weight: 800;
+            background: linear-gradient(90deg, #f87171, #ef4444, #f43f5e, #dc2626);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            letter-spacing: 0.5px;
+        }
+
+        .movies-subtitle {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            font-weight: 400;
+        }
+
+        /* Live Movie Search Bar */
+        .search-movie-bar {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            width: 100%;
+            max-width: 440px;
+            position: relative;
+        }
+
+        .search-input-wrap {
+            position: relative;
+            flex: 1;
+            display: flex;
+            align-items: center;
+        }
+
+        .search-input-wrap > .search-icon {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--primary-color);
+            font-size: 0.9rem;
+            pointer-events: none;
+            z-index: 2;
+        }
+
+        .movie-search-input {
+            width: 100%;
+            background: rgba(14, 2, 4, 0.9);
+            border: 1px solid var(--border-normal);
+            border-radius: 12px;
+            padding: 11px 40px 11px 38px;
+            color: #fff;
+            font-size: 0.85rem;
+            font-family: 'Inter', sans-serif;
+            outline: none;
+            transition: all 0.3s;
+        }
+
+        .movie-search-input:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 15px var(--border-glow);
+            background: rgba(20, 3, 6, 0.95);
+        }
+
+        .movie-search-input::placeholder {
+            color: rgba(254, 205, 211, 0.45);
+        }
+
+        /* Fixed Close / Clear Button */
+        .search-clear-btn {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(239, 68, 68, 0.25);
+            border: 1px solid var(--border-subtle);
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            cursor: pointer;
+            font-size: 0.75rem;
+            z-index: 10;
+            transition: all 0.2s;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        .search-clear-btn:hover {
+            background: var(--primary-color);
+            transform: translateY(-50%) scale(1.15);
+            box-shadow: 0 0 10px var(--border-glow);
+        }
+
+        .search-clear-btn i {
+            position: static !important;
+            left: auto !important;
+            top: auto !important;
+            transform: none !important;
+            color: inherit !important;
+            font-size: 11px !important;
+            line-height: 1 !important;
+            display: block !important;
+        }
+
+        .search-submit-btn {
+            padding: 11px 16px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-glow));
+            color: #fff;
+            border: none;
+            font-weight: 600;
+            font-size: 0.85rem;
+            font-family: 'Poppins', sans-serif;
+            cursor: pointer;
+            transition: all 0.2s;
+            white-space: nowrap;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            box-shadow: 0 4px 15px var(--border-glow);
+        }
+
+        .search-submit-btn:hover {
+            background: linear-gradient(135deg, var(--accent-rose), var(--primary-color));
+            transform: translateY(-1px);
+        }
+        /* Theme Switcher Bar */
+        .theme-switcher-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            padding: 10px 16px;
+            margin: 15px 0 20px;
+            background: var(--bg-card);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--border-normal);
+            border-radius: 16px;
+            flex-wrap: wrap;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+        }
+
+        .theme-bar-label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            font-family: 'Poppins', sans-serif;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .theme-bar-label i {
+            color: var(--primary-color);
+        }
+
+        .theme-buttons-wrap {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .theme-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 12px;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border-subtle);
+            color: var(--text-secondary);
+            font-size: 0.75rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .theme-btn:hover {
+            background: rgba(255, 255, 255, 0.12);
+            color: #fff;
+            border-color: var(--primary-color);
+            transform: translateY(-1px);
+        }
+
+        .theme-btn.active {
+            background: rgba(255, 255, 255, 0.18);
+            border-color: var(--primary-color);
+            color: #fff;
+            box-shadow: 0 0 12px var(--border-glow);
+        }
+
+        .theme-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            display: inline-block;
+            flex-shrink: 0;
+        }
+
+
+        .movies-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(165px, 1fr));
+            gap: 16px;
+            margin-top: 15px;
+        }
+
+        .movie-card {
+            background: rgba(18, 2, 5, 0.85);
+            border: 1px solid var(--border-subtle);
+            border-radius: 14px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            position: relative;
+            cursor: pointer;
+        }
+
+        .movie-card:hover {
+            transform: translateY(-6px) scale(1.02);
+            border-color: var(--primary-color);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.7), 0 0 20px rgba(239, 68, 68, 0.35);
+        }
+
+        .movie-poster-box {
+            position: relative;
+            width: 100%;
+            padding-bottom: 148%;
+            background: #110204;
+            overflow: hidden;
+        }
+
+        .movie-poster {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.4s ease;
+        }
+
+        .movie-card:hover .movie-poster {
+            transform: scale(1.08);
+        }
+
+        .movie-rating {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            background: rgba(10, 1, 2, 0.85);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(239, 68, 68, 0.4);
+            color: #fbbf24;
+            font-size: 0.72rem;
+            font-weight: 800;
+            padding: 3px 8px;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            font-family: 'Poppins', sans-serif;
+            z-index: 2;
+        }
+
+        .movie-tap-hint {
+            position: absolute;
+            bottom: 8px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(10, 1, 2, 0.85);
+            backdrop-filter: blur(6px);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            color: #fecdd3;
+            font-size: 0.65rem;
+            padding: 3px 8px;
+            border-radius: 6px;
+            opacity: 0;
+            transition: opacity 0.2s;
+            pointer-events: none;
+            white-space: nowrap;
+        }
+
+        .movie-card:hover .movie-tap-hint {
+            opacity: 1;
+        }
+
+        .movie-info {
+            padding: 10px 12px 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            flex-grow: 1;
+        }
+
+        .movie-title {
+            font-size: 0.85rem;
+            font-weight: 700;
+            font-family: 'Poppins', sans-serif;
+            color: var(--text-primary);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            line-height: 1.3;
+        }
+
+        .movie-meta {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 0.72rem;
+            color: var(--text-muted);
+            margin-top: 2px;
+        }
+
+        /* The Exact Requested Button Class & Format */
+        .download-btn {
+            margin-top: 8px;
+            background: linear-gradient(135deg, #ef4444, #dc2626, #991b1b);
+            border: 1px solid var(--border-normal);
+            color: #fff !important;
+            font-size: 0.76rem;
+            font-weight: 700;
+            padding: 8px 10px;
+            border-radius: 8px;
+            text-align: center;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            text-decoration: none;
+            font-family: 'Poppins', sans-serif;
+            box-shadow: 0 4px 12px rgba(239, 68, 68, 0.35);
+        }
+
+        .download-btn:hover {
+            background: linear-gradient(135deg, #f87171, #ef4444);
+            box-shadow: 0 0 16px rgba(239, 68, 68, 0.6);
+            transform: translateY(-1px);
+        }
+
+        .movies-loader {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 0;
+            color: var(--text-muted);
+            gap: 12px;
+            font-size: 0.9rem;
+            grid-column: 1 / -1;
+        }
+
+        .movies-loader i {
+            color: var(--primary-color);
+            font-size: 1.4rem;
+        }
+
+        /* ========================================================
+           MOVIE DETAILS MODAL (POPUP ON POSTER TAP)
+           ======================================================== */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            z-index: 2000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 1.5rem;
+            animation: fadeIn 0.25s ease-out;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal-card {
+            background: linear-gradient(135deg, #150205 0%, #0d0102 100%);
+            border: 1px solid var(--border-glow);
+            border-radius: 24px;
+            max-width: 620px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            position: relative;
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.9), 0 0 40px rgba(239, 68, 68, 0.25);
+            animation: modalSlide 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .modal-backdrop-wrap {
+            position: relative;
+            width: 100%;
+            height: 200px;
+            background: #110204;
+            overflow: hidden;
+        }
+
+        .modal-backdrop-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            filter: brightness(0.65);
+        }
+
+        .modal-backdrop-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to bottom, transparent 20%, rgba(13, 1, 2, 0.95) 100%);
+        }
+
+        .modal-close-btn {
+            position: absolute;
+            top: 14px;
+            right: 14px;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: rgba(10, 1, 2, 0.8);
+            border: 1px solid var(--border-normal);
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            z-index: 10;
+        }
+
+        .modal-close-btn:hover {
+            background: #ef4444;
+            transform: scale(1.1);
+        }
+
+        .modal-body {
+            padding: 0 24px 24px;
+            position: relative;
+            margin-top: -60px;
+            z-index: 2;
+        }
+
+        .modal-header-row {
+            display: flex;
+            gap: 18px;
+            align-items: flex-end;
+            margin-bottom: 20px;
+        }
+
+        .modal-poster-thumb {
+            width: 100px;
+            height: 145px;
+            border-radius: 14px;
+            object-fit: cover;
+            border: 2px solid var(--primary-color);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.8), 0 0 15px rgba(239, 68, 68, 0.4);
+            flex-shrink: 0;
+            background: #150205;
+        }
+
+        .modal-title-box {
+            flex: 1;
+            min-width: 0;
+            padding-bottom: 5px;
+        }
+
+        .modal-movie-title {
+            font-family: 'Poppins', sans-serif;
+            font-size: 1.3rem;
+            font-weight: 800;
+            color: #fff;
+            line-height: 1.3;
+            margin-bottom: 6px;
+        }
+
+        .modal-meta-chips {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .chip {
+            padding: 3px 10px;
+            border-radius: 6px;
+            font-size: 0.72rem;
+            font-weight: 700;
+            font-family: 'JetBrains Mono', monospace;
+            background: rgba(239, 68, 68, 0.12);
+            border: 1px solid var(--border-subtle);
+            color: #fca5a5;
+        }
+
+        .chip-rating {
+            background: rgba(251, 191, 36, 0.15);
+            border-color: rgba(251, 191, 36, 0.4);
+            color: #fbbf24;
+        }
+
+        .modal-overview {
+            margin: 18px 0;
+            font-size: 0.88rem;
+            line-height: 1.7;
+            color: var(--text-secondary);
+            background: rgba(18, 2, 5, 0.6);
+            border: 1px solid var(--border-subtle);
+            border-radius: 14px;
+            padding: 16px;
+        }
+
+        .modal-overview h4 {
+            font-family: 'Poppins', sans-serif;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--primary-color);
+            margin-bottom: 6px;
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 12px;
+            margin-top: 20px;
+        }
+
+        .modal-actions .download-btn {
+            flex: 1;
+            padding: 13px 20px;
+            font-size: 0.95rem;
+            margin-top: 0;
+        }
+
+        /* Services Section */
+        .services-section {
+            margin: 2.5rem 0 3rem;
+            text-align: center;
+            background: var(--bg-glass);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-radius: 22px;
+            padding: 30px;
+            border: 1px solid var(--border-normal);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+        }
+
+        .services-title {
+            font-family: 'Poppins', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 800;
+            background: linear-gradient(90deg, #f87171, #ef4444, #f43f5e, #dc2626);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+        }
+
+        .services-subtitle {
+            color: var(--text-muted);
+            margin-bottom: 25px;
+            display: block;
+            font-size: 0.95rem;
+        }
+
+        .links-container {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            max-width: 480px;
+            margin: 0 auto;
+        }
+
+        .link-item {
+            background: rgba(239, 68, 68, 0.08);
+            padding: 16px;
+            border-radius: 14px;
+            text-decoration: none;
+            color: var(--text-primary);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border: 1px solid var(--border-subtle);
+            transition: all 0.3s;
+            font-weight: 600;
+            gap: 10px;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .link-item:hover {
+            border-color: var(--primary-color);
+            background: rgba(239, 68, 68, 0.18);
+            color: #fff;
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(239, 68, 68, 0.3);
+        }
+
+        /* ========================================================
+           COLLAPSIBLE DISCLAIMER SECTION (EXACT REQUESTED STYLES)
+           ======================================================== */
+        .disclaimer-accordion {
+            background: linear-gradient(135deg, rgba(26, 4, 8, 0.9), rgba(14, 2, 4, 0.95));
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--border-normal);
+            border-radius: 20px;
+            margin: 30px 0;
+            overflow: hidden;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5), 0 0 20px rgba(239, 68, 68, 0.1);
+            transition: border-color 0.3s;
+        }
+
+        .disclaimer-accordion:hover {
+            border-color: var(--primary-color);
+        }
+
+        .disclaimer-header {
+            padding: 20px 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: pointer;
+            user-select: none;
+            background: rgba(239, 68, 68, 0.05);
+            transition: background 0.2s;
+        }
+
+        .disclaimer-header:hover {
+            background: rgba(239, 68, 68, 0.1);
+        }
+
+        .disclaimer-header-title {
+            font-family: 'Poppins', sans-serif;
+            font-size: 1.15rem;
+            font-weight: 800;
+            background: linear-gradient(90deg, #f87171, #ef4444, #f43f5e);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            letter-spacing: 0.5px;
+        }
+
+        .disclaimer-toggle-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: rgba(239, 68, 68, 0.15);
+            border: 1px solid var(--border-normal);
+            color: var(--primary-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.85rem;
+            transition: transform 0.3s ease;
+        }
+
+        .disclaimer-accordion.open .disclaimer-toggle-icon {
+            transform: rotate(180deg);
+            background: #ef4444;
+            color: #fff;
+        }
+
+        .disclaimer-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s cubic-bezier(0, 1, 0, 1), padding 0.3s ease;
+            padding: 0 24px;
+        }
+
+        .disclaimer-accordion.open .disclaimer-content {
+            max-height: 600px;
+            padding: 0 24px 24px;
+            transition: max-height 0.4s ease-in-out, padding 0.3s ease;
+        }
+
+        .disclaimer-text {
+            font-family: 'Inter', sans-serif;
+            font-size: 0.85rem;
+            line-height: 1.8;
+            color: var(--text-secondary);
+            background: rgba(10, 1, 2, 0.6);
+            border: 1px solid var(--border-subtle);
+            border-radius: 14px;
+            padding: 18px 20px;
+            white-space: pre-wrap;
+            word-break: break-word;
+            letter-spacing: 0.3px;
+        }
+
+        .footer {
+            text-align: center;
+            padding: 2.5rem 1.5rem;
+            border-top: 1px solid var(--border-subtle);
+            color: var(--text-muted);
+            font-size: 0.875rem;
+            background: var(--bg-glass-dark);
+        }
+
+        .footer a {
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        .click-tooltip {
+            position: absolute !important;
+            bottom: 110%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(15, 2, 4, 0.95);
+            color: white !important;
+            padding: 8px 14px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 700;
+            font-family: 'Poppins', sans-serif;
+            z-index: 10000;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.6);
+            pointer-events: none;
+            border: 1px solid var(--primary-color);
+            white-space: nowrap;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.2s, transform 0.2s;
+        }
+
+        .click-tooltip::after {
+            content: '';
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            border: 5px solid transparent;
+            border-top-color: rgba(15, 2, 4, 0.95);
+        }
+
+        .click-tooltip.show {
+            opacity: 1 !important;
+            visibility: visible !important;
+        }
+
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @media (max-width: 768px) {
+            .file-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 15px;
+            }
+
+            .action-row {
+                flex-direction: column;
+            }
+
+            .download-card {
+                padding: 20px;
+            }
+
+            .movies-grid {
+                grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+                gap: 12px;
+            }
+
+            .search-movie-bar {
+                max-width: 100%;
+            }
+
+            .modal-header-row {
+                flex-direction: column;
+                align-items: center;
+                text-align: center;
+            }
+
+            .modal-poster-thumb {
+                width: 110px;
+                height: 160px;
+            }
+
+            .modal-meta-chips {
+                justify-content: center;
+            }
+        }
+    </style>
 </head>
-<!-- this code is written by @biisal tg:biisal-files  -->
-<!-- stealing credit doesn't make you developer..so try to give full credit to the developer 😊 u will not loose anything for giving proper credit.   -->
 
 <body>
-    <nav>
-        <div class="nleft">
-            <a href="https://t.me/dreamcinezone">
-                <!-- if u are trying to change the header name please remove the title text from bottom line  -->
-                <h3 id="heading" style="z-index: 100;" class="magnet">dreamcinezone </h3>
+    <div class="header">
+        <div class="header-content">
+            <a href="https://t.me/ProviderBotz" class="logo">
+                <i class="fas fa-cloud-arrow-down"></i> ˹ мι꯭֟፝ss ᴘʀᴏᴠɪᴅᴇʀ ˼
             </a>
+            <div class="menu-icon" onclick="toggleMenu()"><i class="fas fa-bars"></i></div>
         </div>
-        <div class="nryt">
-            <a class="home-btn magnet" href="#main" onclick="toggleWidthnav(this)">Home</a>
+    </div>
 
-            <a href="#sec1" class="about-btn magnet" onclick="toggleWidthnav(this)">About</a>
+    <div class="menu-overlay" id="main-menu">
+        <div class="menu-link" onclick="scrollToSection('download-section')"><i class="fas fa-download"></i> Download Center</div>
+        <div class="menu-link" onclick="scrollToSection('movies-section')"><i class="fas fa-search"></i> Search Movies</div>
+        <div class="menu-link" onclick="scrollToSection('services-section')"><i class="fas fa-compass"></i> Explore</div>
+        <div class="menu-link" onclick="scrollToSection('disclaimer-accordion')"><i class="fas fa-shield-alt"></i> Disclaimer</div>
+    
+        <div style="padding: 12px 18px 4px; font-size: 0.75rem; text-transform: uppercase; color: var(--text-muted); font-weight: 700;">Page Themes</div>
+        <div style="display: flex; gap: 8px; padding: 0 18px 14px; flex-wrap: wrap;">
+            <button class="theme-btn" onclick="applyTheme('dark-red')"><span class="theme-dot" style="background:#ef4444"></span> Red</button>
+            <button class="theme-btn" onclick="applyTheme('neon-violet')"><span class="theme-dot" style="background:#a855f7"></span> Violet</button>
+            <button class="theme-btn" onclick="applyTheme('electric-blue')"><span class="theme-dot" style="background:#3b82f6"></span> Blue</button>
+            <button class="theme-btn" onclick="applyTheme('cyber-emerald')"><span class="theme-dot" style="background:#10b981"></span> Emerald</button>
+            <button class="theme-btn" onclick="applyTheme('sunset-amber')"><span class="theme-dot" style="background:#f59e0b"></span> Amber</button>
+            <button class="theme-btn" onclick="applyTheme('cyber-rose')"><span class="theme-dot" style="background:#ec4899"></span> Rose</button>
         </div>
-    </nav>
-    <center>
-        <div class="about-nav">
-            <a href="#sec1" class="wlcm magnet" onclick="toggleWidth(this)">Welcome</a>
-            <a href="#sec2" class="abt-chnl magnet" onclick="toggleWidth(this)">Channels</a>
-            <a href="#sec3" class="magnet bot-btn" onclick="toggleWidth(this) , bot_btn_clicked()">Bots</a>
-            <a href="#sec4" class="magnet contact-btn" onclick="toggleWidth(this)">Let's Talk</a>
-        </div>
-    </center>
-    <!-- this code is written by @biisal tg:biisal-files  -->
-    <!-- stealing credit doesn't make you developer..so try to give full credit to the developer 😊 u will not loose anything for giving proper credit.   -->
+    </div>
 
-    <div class="outer">
-        <div class="inner">
-            <div class="main" id="main">
-                <video id="player" class="player" src="{{file_url}}" type="video/mp4" playsinline controls
-                    width="100%"></video>
-                <div class="player"></div>
-                <div class="file-name">
-                    <h4>File name : </h4>
-                    <br>
-                    <p id="myDiv">{{file_name}}</p>
+    <div class="container">
+        <div class="intro-line">Fast & Direct Cloud File Downloader</div>
+
+        <!-- Optional Video Player (auto-activated if file is media) -->
+        <section id="video-wrapper" class="player-wrapper">
+            <div class="video-container">
+                <video id="player" playsinline controls preload="metadata">
+                    <source src="{{file_url}}" type="video/mp4">
+                </video>
+            </div>
+        </section>
+
+        <!-- Main Download Section -->
+        <section id="download-section">
+            <div class="download-card">
+                <div class="file-header">
+                    <div class="file-icon-box" id="file-icon">
+                        <i class="fas fa-file-download"></i>
+                    </div>
+                    <div class="file-details">
+                        <div class="badge-row">
+                            <span class="type-badge" id="type-badge"><i class="fas fa-bolt"></i> FAST CDN</span>
+                            <span class="size-badge"><i class="fas fa-database"></i> {{file_size}}</span>
+                            <span class="speed-badge"><i class="fas fa-tachometer-alt"></i> MULTITHREAD READY</span>
+                        </div>
+                        <h1 class="file-title" id="file-title">{{file_name}}</h1>
+                    </div>
                 </div>
-                <div class="downloadBtn">
-                    <button class="magnet" onclick="vlc_player()"><img src="https://i.postimg.cc/15TQ4y7B/vlc.png"
-                            alt="">watch in VLC PLAYER</button>
-                    <button class="magnet" onclick="mx_player()"><img src="https://i.postimg.cc/sx4Msv4T/mx.png"
-                            alt="">watch in MX PLAYER</button>
-                    <button class="magnet" onclick="playit_player()"><img src="https://i.postimg.cc/RVGWYJFF/playit.png"
-                            alt="">watch in PLAYit
-                        PLAYER</button>
-                    <button class="magnet" onclick="km_player()"><img src="https://i.postimg.cc/wT9tFQ9Z/km.png"
-                            alt="">watch in KM PLAYER</button>
-                    <button class="magnet" onclick="s_player()"><img src="https://i.postimg.cc/XYJr6NGg/s.png"
-                            alt="">watch in S PLAYER</button>
-                    <button class="magnet" onclick="hd_player()"><img src="https://i.postimg.cc/rFT43LNh/hd.png"
-                            alt="">watch in HD
-                        PLAYER(4K)</button>
-                    <button class="magnet" onclick="bisalDownload()"><img style="height: 35px;"
-                            src="https://i.postimg.cc/Zncc9YLq/Pngtree-download-icon-3581467.png" alt="">download video
+
+                <!-- Primary Download Action -->
+                <button class="btn-main-download" onclick="startDownload()">
+                    <i class="fas fa-cloud-arrow-down fa-lg"></i>
+                    <span>Download File Now</span>
+                </button>
+
+                <!-- Action Buttons Row (Copy, Share, Search Movie) -->
+                <div class="action-row">
+                    <button class="btn-secondary btn-copy" onclick="copyUrl()">
+                        <i class="fas fa-copy"></i>
+                        <span>Copy Link</span>
+                    </button>
+                    <button class="btn-secondary btn-share" onclick="shareUrl()">
+                        <i class="fas fa-share-alt"></i>
+                        <span>Share File</span>
+                    </button>
+                    <button class="btn-secondary btn-search-trigger" onclick="focusMovieSearch()">
+                        <i class="fas fa-search"></i>
+                        <span>Search Movie</span>
                     </button>
                 </div>
 
-            </div>
-            <div class="abt">
-                <div class="about">
-                    <div class="about-dets">
-                        <div class="abt-sec" id="sec1" style="padding: 160px 30px;">
-                            <h1 style="text-align: center;">WELCOME TO OUR <Span>STREAMING</Span> PAGE</h1>
-                            <p style="text-align: center; line-height: 2;word-spacing: 2px;  letter-spacing: 0.8px;">
-                                We're
-                                thrilled to have <span>you</span> here.
-                                Get ready for an
-                                amazing <span>experience</span>
-                                filled with <span>entertainment</span>, <span>fun</span>, and <span>surprises</span>.
-                                Grab
-                                your snacks, sit back, and <span>enjoy</span> the show!
-                            </p>
-                        </div>
-                        <div class="abt-sec" id="sec2">
-                            <h1>OUR ALL <span>CHANNELS</span> LIST</h1>
-                            <div class="links chnl-link">
-                                <a class="magnet" href="https://t.me/dreamcinezone"><button>Update Channel </button></a>
-                                <a class="magnet" href="https://t.me/dreamcinezone"><button> Movie Request Group </button></a>
-                                <a class="magnet" href="#https://youtube.com/@dreamcinezone0"><button>YouTube Channel </button></a>
-                            </div>
-                        </div>
-                        <div class="abt-sec" id="sec3">
-                            <h1>OUR ALL <span>BOTS</span> LIST</h1>
-                            <div class="links bot-link">
-                                <a class="magnet" href="https://t.me/"><button>Chat Gpt Bot
-                                        </button></a>
-                                <a class="magnet" href="https://t.me/"><button>reaction Bot 
-                                        </button></a>
-                            </div>
-                        </div>
-                        <div class="abt-sec" id="sec4">
-                            <!-- this code is written by @biisal tg:biisal-files  -->
-                            <!-- stealing credit doesn't make you developer..so try to give full credit to the developer 😊 u will not loose anything for giving proper credit.   -->
+                <!-- Accelerator / Download tips -->
+                <div class="tips-box">
+                    <i class="fas fa-lightbulb"></i>
+                    <div>
+                        <b>High Speed Tip:</b> For 5x to 10x faster multithreaded download speeds, copy the link and paste into <b>1DM / ADM</b> (Android) or <b>IDM</b> (Windows PC).
+                    </div>
+                </div>
 
-                            <p style="text-align: center;">We Can Tal'k For Your Support And You Can Report Through
-                                Telegram</p>
-                            <div class="links contact">
-                                <a href="https://t.me/Contact_dreamcinezone_bot"><button>Contact</button></a>
-                            </div>
+                <!-- External Player / Downloader Toggle -->
+                <button class="ext-player-btn" onclick="toggleExternalPlayers()">
+                    <i class="fas fa-external-link-alt"></i> Open with External Apps
+                </button>
+
+                <div id="external-players" class="external-players-list">
+                    <button class="ext-option" onclick="openVLC()"><img src="https://i.postimg.cc/15TQ4y7B/vlc.png" width="20" alt="VLC"> VLC Player</button>
+                    <button class="ext-option" onclick="openMX()"><img src="https://i.postimg.cc/sx4Msv4T/mx.png" width="20" alt="MX"> MX Player</button>
+                    <button class="ext-option" onclick="openPlayIt()"><img src="https://i.postimg.cc/RVGWYJFF/playit.png" width="20" alt="PlayIt"> PlayIt</button>
+                    <button class="ext-option" onclick="openADM()"><i class="fas fa-download text-red-400"></i> Send to 1DM / ADM</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- ========================================================
+             SEARCH MOVIES & POPULAR SHOWCASE (RIGHT ABOVE EXPLORE)
+             ======================================================== -->
+        <section class="movies-section" id="movies-section">
+            <div class="movies-section-header">
+                <div class="movies-title-box">
+                    <h2 class="movies-title" id="movies-section-title">
+                        <i class="fas fa-fire"></i> Trending & Popular Movies
+                    </h2>
+                    <span class="movies-subtitle" id="movies-section-subtitle">Tap any poster for full details or search any movie</span>
+                </div>
+
+                <!-- Live Search Bar -->
+                <div class="search-movie-bar">
+                    <div class="search-input-wrap">
+                        <i class="fas fa-search search-icon"></i>
+                        <input
+                            type="text"
+                            id="movie-search-input"
+                            class="movie-search-input"
+                            placeholder="Type movie name (e.g. Inception, Marvel)..."
+                            autocomplete="off"
+                            oninput="handleSearchInput(event)"
+                            onkeydown="handleSearchKey(event)"
+                        />
+                        <button id="search-clear-btn" class="search-clear-btn" onclick="clearMovieSearch()" title="Clear Search & Restore Trending">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                    <button class="search-submit-btn" onclick="executeMovieSearch()">
+                        <i class="fas fa-search"></i> <span>Search</span>
+                    </button>
+                </div>
+            </div>
+
+            <div id="movies-container" class="movies-grid">
+                <div class="movies-loader">
+                    <i class="fas fa-circle-notch fa-spin"></i>
+                    <span>Loading latest popular blockbusters...</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Services Section -->
+        <div class="services-section" id="services-section">
+            <h3 class="services-title">Explore Our Services</h3>
+            <span class="services-subtitle">Discover Our Channels And Intelligent Bots</span>
+            <div class="links-container">
+                <a href="https://t.me/ProviderBotz" class="link-item">
+                    <i class="fab fa-telegram-plane"></i> Join Our Channel
+                </a>
+                <a href="https://t.me/MissProviderChat" class="link-item">
+                    <i class="fas fa-comments"></i> Movie Request Group
+                </a>
+                <a href="https://t.me/LazyProvider" class="link-item">
+                    <i class="fas fa-robot"></i> Our Bots & Support
+                </a>
+            </div>
+        </div>
+
+        <!-- ========================================================
+             EXACT REQUESTED COLLAPSIBLE DISCLAIMER
+             ======================================================== -->
+        <div class="disclaimer-accordion" id="disclaimer-accordion">
+            <div class="disclaimer-header" onclick="toggleDisclaimer()">
+                <div class="disclaimer-header-title">
+                    <i class="fas fa-shield-alt"></i> ▄︻デ𝐃𝐢𝐬𝐜𝐥𝐚𝐢𝐦𝐞𝐫══━一
+                </div>
+                <div class="disclaimer-toggle-icon">
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+            </div>
+            <div class="disclaimer-content">
+                <div class="disclaimer-text">▄︻デ𝐃𝐢𝐬𝐜𝐥𝐚𝐢𝐦𝐞𝐫══━一
+
+ᴀʟʟ ᴛʜᴇ ᴍᴏᴠɪᴇs/sᴇʀɪᴇs ɪs ᴀʟsᴏ ᴀᴠᴀɪʟᴀʙʟᴇ ᴏɴ ᴛʜᴇ ɪɴᴛᴇʀɴᴇᴛ ᴏʀ ᴘᴏsᴛᴇᴅ ʙʏ sᴏᴍᴇʙᴏᴅʏ ᴇʟsᴇ . ᴛʜɪs ʙᴏᴛ ɪs ᴅᴏɪɴɢ ɪɴᴅᴇxɪɴɢ ғʀᴏᴍ ɪɴᴛᴇʀɴᴇᴛ ᴏʀ sᴏᴍᴇʙᴏᴅʏs ᴄʜɴʟ ᴡʜɪᴄʜ ᴀʀᴇ ᴀʟʀᴇᴀᴅʏ  ᴜᴘʟᴏᴀᴅᴇᴅ ᴏɴ ᴛᴇʟᴇɢʀᴀᴍ . ᴡᴇ ʀᴇsᴘᴇᴄᴛ ᴀʟʟ ᴛʜᴇ ᴄᴏᴘʏʀɪɢʜᴛ ʟᴀᴡs ᴀɴᴅ ᴡᴏʀᴋ ɪɴ ᴄᴏᴍᴘʟɪᴀɴᴄᴇ ᴡɪᴛʜ ᴅᴍᴄᴀ ᴀɴᴅ ᴇᴜᴄᴅ ɪғ ʏᴏᴜ ʙᴇʟɪᴠᴇ ᴛʜᴀᴛ ᴛʜɪs ʙᴏᴛ ɪs ᴠɪᴏʟᴀᴛɪɴɢ ʏᴏᴜʀ ɪɴᴛᴇʟʟᴇsᴛᴜᴀʟ ᴘʀᴏᴘᴇʀᴛʏ, ᴛʜᴇɴ ᴄᴏɴᴛᴀᴄᴛ ᴛᴏ sᴜᴘᴘᴏʀᴛ ᴄʜᴀᴛ sᴏ ᴛʜᴀᴛ ɪᴛ ᴄᴀɴ ʙᴇ ʀᴇᴍᴏᴠᴇᴅ ᴀsᴀᴘ . ᴛʜᴇ ʙᴏᴛ ᴅᴏᴇs ɴᴏᴛ ᴏᴡɴ ᴀɴʏ ᴏғ ᴛʜᴇsᴇ ᴄᴏɴᴛᴇɴᴛ, ɪᴛ ᴏɴʟʏ ɪɴᴅᴇx ᴛʜᴇ ғɪʟᴇs ғʀᴏᴍ ᴛᴇʟᴇɢʀᴀᴍ .</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========================================================
+         MOVIE DETAILS MODAL (POPUP ON POSTER TAP)
+         ======================================================== -->
+    <div class="modal-overlay" id="movie-details-modal" onclick="closeMovieModalOnOutside(event)">
+        <div class="modal-card" id="modal-card">
+            <button class="modal-close-btn" onclick="closeMovieModal()">
+                <i class="fas fa-times"></i>
+            </button>
+            <div class="modal-backdrop-wrap">
+                <img id="modal-backdrop" src="" alt="Backdrop" class="modal-backdrop-img" />
+                <div class="modal-backdrop-overlay"></div>
+            </div>
+            <div class="modal-body">
+                <div class="modal-header-row">
+                    <img id="modal-poster" src="" alt="Poster" class="modal-poster-thumb" />
+                    <div class="modal-title-box">
+                        <h3 id="modal-title" class="modal-movie-title">Movie Title</h3>
+                        <div class="modal-meta-chips">
+                            <span id="modal-rating" class="chip chip-rating"><i class="fas fa-star"></i> 8.5</span>
+                            <span id="modal-year" class="chip">2026</span>
+                            <span id="modal-lang" class="chip">EN</span>
                         </div>
                     </div>
+                </div>
+
+                <div class="modal-overview">
+                    <h4>Overview & Storyline</h4>
+                    <p id="modal-desc">Movie description will appear here...</p>
+                </div>
+
+                <div class="modal-actions">
+                    <a id="modal-bot-btn" class="download-btn" href="#" target="_blank">
+                        <i class="fab fa-telegram-plane"></i> Search In Bot
+                    </a>
                 </div>
             </div>
         </div>
-        <footer>
-            <div class="mid">
-                <h1 class="mid-text">VISIT <a href="#sec3" onclick="bot_btn_clicked()"><span>OUR BOTS LIST</span></a>
-                    FOR
-                    MORE
-                    INFO</h1>
-            </div>
+    </div>
 
-            <div class="last-text">
-                <p style="font-weight: 500;">
-                    Welcome To Our Online Streaming Platform! Our Website Allows Users To Generate Streamable Links For
-                    Various Files Using Telegram Bots. Please Note That We Are Not Responsible For The Content Shared Or
-                    Streamed Through Our Service. Users Are Encouraged To Respect Copyright Laws And Adhere To Our
-                    Community
-                    Guidelines. Enjoy Easy, Hassle-Free File Streaming.
-                </p>
-            </div>
-            <center>
+    <div class="footer">
+        Copyright © 2026 <a href="https://t.me/ProviderBotz">˹ мι꯭֟፝ss ᴘʀᴏᴠɪᴅᴇʀ ˼</a>. All Rights Reserved.
+    </div>
 
-                <div class="movie-cont">
-                    <a href="https://t.me/dreamcinezone">
-                        <div class="movieSug">
-                            <div class="movieDets">
+    <script src="https://cdn.plyr.io/3.7.8/plyr.polyfilled.js"></script>
 
+    <script>
+        const TMDB_KEY = "282fec93f7dac5a152e0b321327b46c4";
+        const fileDirectUrl = "{{file_url}}";
+        let currentMoviesData = [];
+
+        function getDirectStreamUrl() {
+            if (fileDirectUrl && !fileDirectUrl.startsWith("{{")) {
+                return fileDirectUrl;
+            }
+            if (window.location.href.includes('/watch/')) {
+                return window.location.href.replace('/watch/', '/');
+            }
+            return window.location.href;
+        }
+
+        // Calculate clean titleSlug: moviename + year
+        function generateTitleSlug(title, releaseDate) {
+            const year = releaseDate ? releaseDate.split('-')[0] : '';
+            const cleanTitle = (title || 'movie')
+                .toLowerCase()
+                .replace(/[^a-z0-9]+/g, '-')
+                .replace(/^-+|-+$/g, '');
+            return year ? `${cleanTitle}-${year}` : cleanTitle;
+        }
+
+        function showClickTooltip(btn, text) {
+            document.querySelectorAll('.click-tooltip').forEach(tooltip => tooltip.remove());
+            const tooltip = document.createElement('div');
+            tooltip.className = 'click-tooltip';
+            tooltip.textContent = `Applied: ${text}`;
+            btn.style.position = 'relative';
+            btn.appendChild(tooltip);
+            tooltip.classList.add('show');
+            setTimeout(() => {
+                if (tooltip.parentNode) {
+                    tooltip.classList.remove('show');
+                    setTimeout(() => {
+                        if (tooltip.parentNode) tooltip.remove();
+                    }, 100);
+                }
+            }, 2000);
+        }
+
+        function startDownload() {
+            const downloadUrl = getDirectStreamUrl();
+            const a = document.createElement('a');
+            a.href = downloadUrl;
+            a.download = document.getElementById('file-title')?.textContent || '';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+        }
+
+        function copyUrl() {
+            const btn = document.querySelector('.btn-copy');
+            const urlToCopy = getDirectStreamUrl();
+            try {
+                if (navigator.clipboard && window.isSecureContext) {
+                    navigator.clipboard.writeText(urlToCopy).then(() => {
+                        const original = btn.innerHTML;
+                        btn.innerHTML = '<i class="fas fa-check"></i> Copied!';
+                        setTimeout(() => btn.innerHTML = original, 2000);
+                        showClickTooltip(btn, 'Direct Link Copied!');
+                    });
+                    return;
+                }
+            } catch (e) {}
+
+            try {
+                const tmp = document.createElement('textarea');
+                tmp.value = urlToCopy;
+                tmp.setAttribute('readonly', '');
+                tmp.style.position = 'absolute';
+                tmp.style.left = '-9999px';
+                document.body.appendChild(tmp);
+                tmp.select();
+                const successful = document.execCommand('copy');
+                document.body.removeChild(tmp);
+                if (successful) {
+                    const original = btn.innerHTML;
+                    btn.innerHTML = '<i class="fas fa-check"></i> Copied!';
+                    setTimeout(() => btn.innerHTML = original, 2000);
+                    showClickTooltip(btn, 'Direct Link Copied!');
+                }
+            } catch (e) {}
+        }
+
+        function shareUrl() {
+            const btn = document.querySelector('.btn-share');
+            const shareUrlText = window.location.href;
+            if (navigator.share) {
+                navigator.share({
+                    title: document.title,
+                    text: `Download File: ${document.title}`,
+                    url: shareUrlText
+                }).then(() => {
+                    const original = btn.innerHTML;
+                    btn.innerHTML = '<i class="fas fa-check"></i> Shared!';
+                    setTimeout(() => btn.innerHTML = original, 2000);
+                    showClickTooltip(btn, 'Shared Successfully!');
+                }).catch(() => {});
+                return;
+            }
+            copyUrl();
+        }
+
+        function toggleMenu() {
+            document.getElementById('main-menu').classList.toggle('active');
+        }
+
+        function scrollToSection(id) {
+            const el = document.getElementById(id);
+            if (el) {
+                el.scrollIntoView({ behavior: 'smooth' });
+            }
+            document.getElementById('main-menu').classList.remove('active');
+        }
+
+        function focusMovieSearch() {
+            scrollToSection('movies-section');
+            setTimeout(() => {
+                const input = document.getElementById('movie-search-input');
+                if (input) {
+                    input.focus();
+                    input.select();
+                }
+            }, 300);
+        }
+
+        function toggleExternalPlayers() {
+            const el = document.getElementById('external-players');
+            el.classList.toggle('active');
+        }
+
+        function toggleDisclaimer() {
+            const el = document.getElementById('disclaimer-accordion');
+            if (el) {
+                el.classList.toggle('open');
+            }
+        }
+
+        function openVLC() {
+            const streamUrl = getDirectStreamUrl();
+            const link = streamUrl.replace(/^https?:\/\//, "");
+            const playStoreUrl = "https://play.google.com/store/apps/details?id=org.videolan.vlc";
+            const isAndroid = /android/i.test(navigator.userAgent);
+            if (isAndroid) {
+                window.location.href = `intent://${link}#Intent;scheme=https;package=org.videolan.vlc;action=android.intent.action.VIEW;type=video/*;S.browser_fallback_url=${encodeURIComponent(playStoreUrl)};end`;
+            } else {
+                window.location.href = `vlc://${streamUrl}`;
+            }
+        }
+
+        function openMX() {
+            const streamUrl = getDirectStreamUrl();
+            const link = streamUrl.replace(/^https?:\/\//, '');
+            const playStoreUrl = "https://play.google.com/store/apps/details?id=com.mxtech.videoplayer.ad";
+            window.location.href = `intent://${link}#Intent;scheme=https;package=com.mxtech.videoplayer.ad;action=android.intent.action.VIEW;type=video/*;S.browser_fallback_url=${encodeURIComponent(playStoreUrl)};end`;
+        }
+
+        function openPlayIt() {
+            const streamUrl = getDirectStreamUrl();
+            const link = streamUrl.replace(/^https?:\/\//, '');
+            const playStoreUrl = "https://play.google.com/store/apps/details?id=com.playit.videoplayer";
+            window.location.href = `intent://${link}#Intent;scheme=https;package=com.playit.videoplayer;action=android.intent.action.VIEW;type=video/*;S.browser_fallback_url=${encodeURIComponent(playStoreUrl)};end`;
+        }
+
+        function openADM() {
+            const streamUrl = getDirectStreamUrl();
+            const link = streamUrl.replace(/^https?:\/\//, '');
+            window.location.href = `intent://${link}#Intent;scheme=https;action=android.intent.action.VIEW;type=*/*;end`;
+        }
+
+        // ========================================================
+        // TMDB MOVIES: POPULAR & LIVE SEARCH ENGINE
+        // ========================================================
+        async function fetchPopularMovies() {
+            const container = document.getElementById('movies-container');
+            if (!container) return;
+
+            container.innerHTML = `
+                <div class="movies-loader">
+                    <i class="fas fa-circle-notch fa-spin"></i>
+                    <span>Loading latest popular blockbusters...</span>
+                </div>
+            `;
+
+            const TMDB_URL = `https://api.themoviedb.org/3/movie/popular?api_key=${TMDB_KEY}&language=en-US&page=1`;
+
+            try {
+                const response = await fetch(TMDB_URL);
+                if (!response.ok) throw new Error("TMDB network response was not ok");
+                const data = await response.json();
+                currentMoviesData = data.results || [];
+                renderMovies(currentMoviesData);
+            } catch (err) {
+                console.error("Failed to load TMDB movies:", err);
+                container.innerHTML = `
+                    <div class="movies-loader">
+                        <i class="fas fa-exclamation-circle text-red-500"></i>
+                        <span>Unable to load movies right now. Check our Telegram channel!</span>
+                    </div>
+                `;
+            }
+        }
+
+        function renderMovies(movies) {
+            const container = document.getElementById('movies-container');
+            if (!container) return;
+
+            if (!movies || movies.length === 0) {
+                container.innerHTML = `
+                    <div class="movies-loader">
+                        <i class="fas fa-film"></i>
+                        <span>No movies found matching your query.</span>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = movies.map((movie, index) => {
+                const poster = movie.poster_path 
+                    ? `https://image.tmdb.org/t/p/w500${movie.poster_path}`
+                    : "https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?w=500&auto=format&fit=crop&q=60";
+                const rating = (movie.vote_average || 0).toFixed(1);
+                const year = movie.release_date ? movie.release_date.split('-')[0] : '2026';
+                const safeTitle = (movie.title || 'Movie').replace(/"/g, '&quot;');
+                const titleSlug = generateTitleSlug(movie.title, movie.release_date);
+                const botSearchUrl = `https://t.me/MissProviderBot?start=getfile-${titleSlug}`;
+
+                return `
+                    <div class="movie-card" onclick="openMovieDetails(${index})" title="${safeTitle} (${year})">
+                        <div class="movie-poster-box">
+                            <img src="${poster}" alt="${safeTitle}" class="movie-poster" loading="lazy" />
+                            <div class="movie-rating">
+                                <i class="fas fa-star"></i> ${rating}
                             </div>
-                            <div class="movieimg">
-                                <img src="">
-                            </div>
+                            <div class="movie-tap-hint">Tap for Info</div>
                         </div>
-                    </a>
-                    <div class="low-width-movie-dets">
-                        <div class="movieStsBar">
-                            <div class="movieDets-mini">
-
+                        <div class="movie-info">
+                            <div class="movie-title">${safeTitle}</div>
+                            <div class="movie-meta">
+                                <span>${year}</span>
+                                <span><i class="fas fa-eye text-red-400"></i> ${Math.round(movie.popularity || 100)}</span>
                             </div>
+                            <!-- Exact requested button format -->
+                            <a class="download-btn" href="${botSearchUrl}" target="_blank" onclick="event.stopPropagation()">
+                                <i class="fab fa-telegram-plane"></i> Search In Bot
+                            </a>
                         </div>
                     </div>
-                    <button class="ranMovBtn" onclick="getDets()">Get More Movies Suggestion</button>
-                </div>
+                `;
+            }).join('');
+        }
 
-            </center>
-            <!-- this code is written by @biisal tg:biisal-files  -->
-            <!-- stealing credit doesn't make you developer..so try to give full credit to the developer 😊 u will not loose anything for giving proper credit.   -->
+        let searchDebounceTimer = null;
 
+        const THEMES = {
+            'dark-red': {
+                name: 'Dark Red (Crimson)',
+                primary: '#ef4444',
+                primaryGlow: '#dc2626',
+                accentRose: '#f43f5e',
+                accentDark: '#991b1b',
+                bgPrimary: '#0a0102',
+                bgSecondary: '#140205',
+                bgCard: 'rgba(26, 4, 8, 0.85)',
+                bgGlass: 'rgba(30, 4, 8, 0.75)',
+                bgGlassDark: 'rgba(12, 2, 4, 0.96)',
+                borderSubtle: 'rgba(239, 68, 68, 0.18)',
+                borderNormal: 'rgba(239, 68, 68, 0.35)',
+                borderGlow: 'rgba(239, 68, 68, 0.65)',
+                textPrimary: '#fff1f2',
+                textSecondary: '#fecdd3',
+                textMuted: 'rgba(254, 205, 211, 0.65)',
+                gradientBody: 'linear-gradient(135deg, #0a0102 0%, #150205 45%, #25040a 100%)'
+            },
+            'neon-violet': {
+                name: 'Neon Violet (Purple)',
+                primary: '#a855f7',
+                primaryGlow: '#9333ea',
+                accentRose: '#c084fc',
+                accentDark: '#6b21a8',
+                bgPrimary: '#05020c',
+                bgSecondary: '#0c0418',
+                bgCard: 'rgba(16, 5, 32, 0.85)',
+                bgGlass: 'rgba(20, 7, 40, 0.75)',
+                bgGlassDark: 'rgba(8, 3, 16, 0.96)',
+                borderSubtle: 'rgba(168, 85, 247, 0.18)',
+                borderNormal: 'rgba(168, 85, 247, 0.35)',
+                borderGlow: 'rgba(168, 85, 247, 0.65)',
+                textPrimary: '#faf5ff',
+                textSecondary: '#e9d5ff',
+                textMuted: 'rgba(233, 213, 255, 0.65)',
+                gradientBody: 'linear-gradient(135deg, #05020c 0%, #0d041a 45%, #190833 100%)'
+            },
+            'electric-blue': {
+                name: 'Electric Blue (Sapphire)',
+                primary: '#3b82f6',
+                primaryGlow: '#2563eb',
+                accentRose: '#60a5fa',
+                accentDark: '#1e40af',
+                bgPrimary: '#01050e',
+                bgSecondary: '#030c1e',
+                bgCard: 'rgba(4, 16, 40, 0.85)',
+                bgGlass: 'rgba(5, 20, 50, 0.75)',
+                bgGlassDark: 'rgba(2, 8, 20, 0.96)',
+                borderSubtle: 'rgba(59, 130, 246, 0.18)',
+                borderNormal: 'rgba(59, 130, 246, 0.35)',
+                borderGlow: 'rgba(59, 130, 246, 0.65)',
+                textPrimary: '#eff6ff',
+                textSecondary: '#bfdbfe',
+                textMuted: 'rgba(191, 219, 254, 0.65)',
+                gradientBody: 'linear-gradient(135deg, #01050e 0%, #030e24 45%, #081d45 100%)'
+            },
+            'cyber-emerald': {
+                name: 'Cyber Emerald (Green)',
+                primary: '#10b981',
+                primaryGlow: '#059669',
+                accentRose: '#34d399',
+                accentDark: '#047857',
+                bgPrimary: '#010a05',
+                bgSecondary: '#02150a',
+                bgCard: 'rgba(3, 28, 14, 0.85)',
+                bgGlass: 'rgba(4, 35, 18, 0.75)',
+                bgGlassDark: 'rgba(1, 14, 7, 0.96)',
+                borderSubtle: 'rgba(16, 185, 129, 0.18)',
+                borderNormal: 'rgba(16, 185, 129, 0.35)',
+                borderGlow: 'rgba(16, 185, 129, 0.65)',
+                textPrimary: '#ecfdf5',
+                textSecondary: '#a7f3d0',
+                textMuted: 'rgba(167, 243, 208, 0.65)',
+                gradientBody: 'linear-gradient(135deg, #010a05 0%, #02170b 45%, #052c16 100%)'
+            },
+            'sunset-amber': {
+                name: 'Sunset Amber (Gold)',
+                primary: '#f59e0b',
+                primaryGlow: '#d97706',
+                accentRose: '#fbbf24',
+                accentDark: '#b45309',
+                bgPrimary: '#0b0601',
+                bgSecondary: '#160d02',
+                bgCard: 'rgba(30, 16, 4, 0.85)',
+                bgGlass: 'rgba(38, 20, 5, 0.75)',
+                bgGlassDark: 'rgba(14, 8, 2, 0.96)',
+                borderSubtle: 'rgba(245, 158, 11, 0.18)',
+                borderNormal: 'rgba(245, 158, 11, 0.35)',
+                borderGlow: 'rgba(245, 158, 11, 0.65)',
+                textPrimary: '#fffbeb',
+                textSecondary: '#fde68a',
+                textMuted: 'rgba(253, 230, 138, 0.65)',
+                gradientBody: 'linear-gradient(135deg, #0b0601 0%, #1a0e02 45%, #331c05 100%)'
+            },
+            'cyber-rose': {
+                name: 'Cyber Rose (Pink)',
+                primary: '#ec4899',
+                primaryGlow: '#db2777',
+                accentRose: '#f472b6',
+                accentDark: '#9d174d',
+                bgPrimary: '#0a0106',
+                bgSecondary: '#16020d',
+                bgCard: 'rgba(28, 4, 18, 0.85)',
+                bgGlass: 'rgba(36, 5, 23, 0.75)',
+                bgGlassDark: 'rgba(14, 2, 9, 0.96)',
+                borderSubtle: 'rgba(236, 72, 153, 0.18)',
+                borderNormal: 'rgba(236, 72, 153, 0.35)',
+                borderGlow: 'rgba(236, 72, 153, 0.65)',
+                textPrimary: '#fdf2f8',
+                textSecondary: '#fbcfe8',
+                textMuted: 'rgba(251, 207, 232, 0.65)',
+                gradientBody: 'linear-gradient(135deg, #0a0106 0%, #1a0210 45%, #330420 100%)'
+            }
+        };
 
-            <center>
-                <div class="copyright">
-                    <h5 class="text-center">Copyright © 2024 <a href="https://t.me/dreamcinezone"><span
-                                style="font-weight: 700;">dreamcinezone </span></a>. All
-                        Rights Reserved.</h5>
-                    <div class="icons">
-                        <a href="https://t.me/dreamcinezone"><i class="fa-brands fa-telegram fa-lg"></i></a>
-                        
+        function applyTheme(themeKey) {
+            const t = THEMES[themeKey] || THEMES['dark-red'];
+            const root = document.documentElement;
+            root.style.setProperty('--primary-color', t.primary);
+            root.style.setProperty('--primary-glow', t.primaryGlow);
+            root.style.setProperty('--accent-rose', t.accentRose);
+            root.style.setProperty('--accent-dark-red', t.accentDark);
+            root.style.setProperty('--bg-primary', t.bgPrimary);
+            root.style.setProperty('--bg-secondary', t.bgSecondary);
+            root.style.setProperty('--bg-card', t.bgCard);
+            root.style.setProperty('--bg-glass', t.bgGlass);
+            root.style.setProperty('--bg-glass-dark', t.bgGlassDark);
+            root.style.setProperty('--border-subtle', t.borderSubtle);
+            root.style.setProperty('--border-normal', t.borderNormal);
+            root.style.setProperty('--border-glow', t.borderGlow);
+            root.style.setProperty('--text-primary', t.textPrimary);
+            root.style.setProperty('--text-secondary', t.textSecondary);
+            root.style.setProperty('--text-muted', t.textMuted);
+            root.style.setProperty('--plyr-color-main', t.primary);
+            document.body.style.background = t.gradientBody;
+
+            document.querySelectorAll('.theme-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.theme === themeKey);
+            });
+
+            try {
+                localStorage.setItem('stream_theme_id', themeKey);
+            } catch(e) {}
+        }
+
+        function initSavedTheme() {
+            try {
+                const saved = localStorage.getItem('stream_theme_id');
+                if (saved && THEMES[saved]) {
+                    applyTheme(saved);
+                    return;
+                }
+            } catch(e) {}
+            applyTheme('dark-red');
+        }
+
+        // Live Real-Time Search Handler (Fast 350ms debounce)
+        function handleSearchInput(event) {
+            const input = document.getElementById('movie-search-input');
+            const clearBtn = document.getElementById('search-clear-btn');
+            const val = input ? input.value : '';
+
+            if (clearBtn) {
+                clearBtn.style.display = val.trim().length > 0 ? 'inline-flex' : 'none';
+            }
+
+            clearTimeout(searchDebounceTimer);
+            if (!val.trim()) {
+                executeMovieSearch();
+                return;
+            }
+
+            searchDebounceTimer = setTimeout(() => {
+                executeMovieSearch();
+            }, 350);
+        }
+
+        function handleSearchKey(event) {
+            if (event.key === 'Enter') {
+                clearTimeout(searchDebounceTimer);
+                executeMovieSearch();
+            }
+        }
+
+        function clearMovieSearch() {
+            const input = document.getElementById('movie-search-input');
+            const clearBtn = document.getElementById('search-clear-btn');
+            if (input) {
+                input.value = '';
+                input.focus();
+            }
+            if (clearBtn) {
+                clearBtn.style.display = 'none';
+            }
+            clearTimeout(searchDebounceTimer);
+            executeMovieSearch();
+        }
+
+        async function executeMovieSearch() {
+            const input = document.getElementById('movie-search-input');
+            const query = input ? input.value.trim() : '';
+
+            const titleEl = document.getElementById('movies-section-title');
+            const subtitleEl = document.getElementById('movies-section-subtitle');
+            const clearBtn = document.getElementById('search-clear-btn');
+
+            if (clearBtn) {
+                clearBtn.style.display = query.length > 0 ? 'inline-flex' : 'none';
+            }
+
+            if (!query) {
+                if (titleEl) titleEl.innerHTML = `<i class="fas fa-fire"></i> Trending & Popular Movies`;
+                if (subtitleEl) subtitleEl.textContent = `Tap any poster for full details or search any movie`;
+                initSavedTheme();
+            fetchPopularMovies();
+                return;
+            }
+
+            if (titleEl) titleEl.innerHTML = `<i class="fas fa-search"></i> Results for \"${query}\"`;
+            if (subtitleEl) subtitleEl.textContent = `Showing TMDB search results. Tap any movie for details.`;
+
+            const container = document.getElementById('movies-container');
+            if (container) {
+                container.innerHTML = `
+                    <div class="movies-loader">
+                        <i class="fas fa-circle-notch fa-spin"></i>
+                        <span>Searching TMDB for \"${query}\"...</span>
                     </div>
-                    <h4 style="font-weight: 700;">This Page Is Made By <a
-                            href="https://t.me/dreamcinezone"><span>dreamcinezone </span></a></h4>
-                </div>
-            </center>
-        </footer>
-</body>
+                `;
+            }
 
+            const searchUrl = `https://api.themoviedb.org/3/search/movie?api_key=${TMDB_KEY}&query=${encodeURIComponent(query)}&language=en-US&page=1`;
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/0.155.0/three.min.js"></script>
-<script src="https://cdn.jsdelivr.net/gh/automat/controlkit.js@master/bin/controlKit.min.js"></script>
-<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/sheryjs/dist/Shery.js"></script>
-<script>
-    document.addEventListener("DOMContentLoaded", function () {
-        const uncopyableElement = document.querySelector(".uncopyable");
+            try {
+                const response = await fetch(searchUrl);
+                if (!response.ok) throw new Error("Search network failed");
+                const data = await response.json();
+                currentMoviesData = data.results || [];
+                renderMovies(currentMoviesData);
+            } catch (err) {
+                console.error("Search error:", err);
+                if (container) {
+                    container.innerHTML = `
+                        <div class="movies-loader">
+                            <i class="fas fa-exclamation-circle" style="color: var(--primary-color);"></i>
+                            <span>Search failed. Please try another name or check Telegram bot!</span>
+                        </div>
+                    `;
+                }
+            }
+        }
 
-        uncopyableElement.addEventListener("selectstart", function (event) {
-            event.preventDefault();
+        // ========================================================
+        // MOVIE DETAILS MODAL (POPUP ON POSTER TAP)
+        // ========================================================
+        function openMovieDetails(index) {
+            const movie = currentMoviesData[index];
+            if (!movie) return;
+
+            const modal = document.getElementById('movie-details-modal');
+            const backdropImg = document.getElementById('modal-backdrop');
+            const posterImg = document.getElementById('modal-poster');
+            const titleEl = document.getElementById('modal-title');
+            const ratingEl = document.getElementById('modal-rating');
+            const yearEl = document.getElementById('modal-year');
+            const langEl = document.getElementById('modal-lang');
+            const descEl = document.getElementById('modal-desc');
+            const botBtn = document.getElementById('modal-bot-btn');
+
+            const poster = movie.poster_path 
+                ? `https://image.tmdb.org/t/p/w500${movie.poster_path}`
+                : "https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?w=500&auto=format&fit=crop&q=60";
+
+            const backdrop = movie.backdrop_path 
+                ? `https://image.tmdb.org/t/p/w1280${movie.backdrop_path}`
+                : poster;
+
+            const year = movie.release_date ? movie.release_date.split('-')[0] : '2026';
+            const rating = (movie.vote_average || 0).toFixed(1);
+            const titleSlug = generateTitleSlug(movie.title, movie.release_date);
+            const botSearchUrl = `https://t.me/MissProviderBot?start=getfile-${titleSlug}`;
+
+            backdropImg.src = backdrop;
+            posterImg.src = poster;
+            titleEl.textContent = movie.title || 'Movie Details';
+            ratingEl.innerHTML = `<i class="fas fa-star"></i> ${rating} (${movie.vote_count || 0})`;
+            yearEl.textContent = year;
+            langEl.textContent = (movie.original_language || 'EN').toUpperCase();
+            descEl.textContent = movie.overview || 'No detailed plot summary is currently available for this title. You can search directly in the bot for video files, dual audio prints, and qualities.';
+
+            botBtn.href = botSearchUrl;
+            botBtn.innerHTML = `<i class="fab fa-telegram-plane"></i> Search In Bot`;
+
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeMovieModal() {
+            const modal = document.getElementById('movie-details-modal');
+            if (modal) modal.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        function closeMovieModalOnOutside(event) {
+            if (event.target.id === 'movie-details-modal') {
+                closeMovieModal();
+            }
+        }
+
+        // Auto-detect extension and customize icon + check for media
+        document.addEventListener("DOMContentLoaded", () => {
+            const titleEl = document.getElementById('file-title');
+            let fileName = titleEl?.textContent || "";
+            const ext = fileName.split('.').pop().toLowerCase();
+
+            const iconEl = document.getElementById('file-icon');
+            const typeBadge = document.getElementById('type-badge');
+
+            if (['zip', 'rar', '7z', 'tar', 'gz', 'bz2'].includes(ext)) {
+                iconEl.innerHTML = '<i class="fas fa-file-zipper"></i>';
+                typeBadge.innerHTML = '<i class="fas fa-archive"></i> ARCHIVE';
+            } else if (['apk', 'xapk', 'apks'].includes(ext)) {
+                iconEl.innerHTML = '<i class="fab fa-android"></i>';
+                typeBadge.innerHTML = '<i class="fab fa-android"></i> ANDROID APP';
+            } else if (['pdf', 'epub', 'mobi', 'docx', 'doc', 'txt'].includes(ext)) {
+                iconEl.innerHTML = '<i class="fas fa-file-lines"></i>';
+                typeBadge.innerHTML = '<i class="fas fa-file-pdf"></i> DOCUMENT';
+            } else if (['mp3', 'wav', 'flac', 'aac', 'ogg', 'm4a'].includes(ext)) {
+                iconEl.innerHTML = '<i class="fas fa-music"></i>';
+                typeBadge.innerHTML = '<i class="fas fa-headphones"></i> AUDIO';
+            } else if (['mp4', 'mkv', 'webm', 'avi', 'mov', 'flv'].includes(ext)) {
+                iconEl.innerHTML = '<i class="fas fa-film"></i>';
+                typeBadge.innerHTML = '<i class="fas fa-video"></i> VIDEO';
+                // Activate embedded player for videos
+                const videoWrapper = document.getElementById('video-wrapper');
+                if (videoWrapper) {
+                    videoWrapper.style.display = 'block';
+                    try {
+                        new Plyr('#player', {
+                            controls: ['play-large', 'play', 'progress', 'current-time', 'duration', 'mute', 'fullscreen']
+                        });
+                    } catch (e) {}
+                }
+            } else if (['iso', 'exe', 'dmg', 'msi'].includes(ext)) {
+                iconEl.innerHTML = '<i class="fas fa-compact-disc"></i>';
+                typeBadge.innerHTML = '<i class="fas fa-desktop"></i> SOFTWARE';
+            }
+
+            fetchPopularMovies();
         });
-    });
-</script>
-<script src="js/wow.min.js"></script>
-<script>
-    new WOW().init();
-</script>
-<script src="https://cdn.plyr.io/3.6.9/plyr.js"></script>
-<script src="https://biisal.github.io/Resources/StreamJs.js"></script>
-<script src="script.js"></script>
+
+        document.addEventListener("click", (e) => {
+            if (!e.target.closest(".ext-player-btn") && !e.target.closest(".external-players-list")) {
+                document.getElementById('external-players')?.classList.remove('active');
+            }
+            if (!e.target.closest(".menu-icon") && !e.target.closest(".menu-overlay")) {
+                document.getElementById('main-menu')?.classList.remove('active');
+            }
+        });
+
+        document.addEventListener("keydown", (e) => {
+            if (e.key === "Escape") {
+                closeMovieModal();
+            }
+        });
+    </script>
+</body>
 
 </html>
