@@ -97,7 +97,7 @@ async def handle_forcesub_menu(client, query):
         return await query.answer("ɴᴇᴇᴅ ᴛᴏ ʙᴇ ᴀᴅᴍɪɴ ᴛᴏ ᴜꜱᴇ ᴛʜɪꜱ ✅.", show_alert=True)
 
     settings = await get_settings(int(grp_id))
-    fsub_list = settings.get('fsub_id')
+    fsub_list = settings.get('fsub') or settings.get('fsub_id')
     if fsub_list and isinstance(fsub_list, list):
          fsub_str = "\n".join([f"<code>{id}</code>" for id in fsub_list])
     elif fsub_list:
@@ -208,15 +208,18 @@ async def set_fsub_ui(client, query):
             return await query.message.reply(f"<b><code>{channel_id}</code> ᴛʜɪꜱ ɪꜱ ɴᴏᴛ ᴄʜᴀɴɴᴇʟ.</b>")
 
         settings = await get_settings(int(grp_id))
-        current_fsub = settings.get('fsub_id', [])
+        current_fsub = settings.get('fsub') or settings.get('fsub_id') or []
         if not isinstance(current_fsub, list):
              if current_fsub:
                  current_fsub = [current_fsub]
              else:
                  current_fsub = []
+        else:
+             current_fsub = list(current_fsub)
         if channel_id not in current_fsub:
             current_fsub.append(channel_id)
 
+        await save_group_settings(int(grp_id), 'fsub', current_fsub)
         await save_group_settings(int(grp_id), 'fsub_id', current_fsub)
         await m.delete()
         await msg.delete()
@@ -239,6 +242,7 @@ async def remove_fsub_ui(client, query):
      user_id = query.from_user.id if query.from_user else None
      if not await is_check_admin(client, int(grp_id), user_id):
         return await query.answer("ɴᴇᴇᴅ ᴛᴏ ʙᴇ ᴀᴅᴍɪɴ ᴛᴏ ᴜꜱᴇ ᴛʜɪꜱ ✅.", show_alert=True)
+     await delete_group_setting(int(grp_id), 'fsub')
      await delete_group_setting(int(grp_id), 'fsub_id')
      await query.answer("ꜰᴏʀᴄᴇ ꜱᴜʙ ʀᴇᴍᴏᴠᴇᴅ!", show_alert=True)
      query.data = f'fsub_setgs#{grp_id}'
