@@ -176,7 +176,7 @@ class Database:
             'verify_time': TWO_VERIFY_GAP,
             'third_verify_time': THREE_VERIFY_GAP,
             'caption': CUSTOM_FILE_CAPTION,
-            'fsub': AUTH_CHANNELS,
+            'fsub': None,
         }
         chat = await self.grp.find_one({'id': int(id)})
         if chat and 'settings' in chat:
