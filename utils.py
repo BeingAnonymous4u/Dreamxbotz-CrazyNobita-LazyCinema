@@ -32,8 +32,8 @@ BTN_URL_REGEX = re.compile(
 imdb = IMDBKit()
 
 BANNED = {}
-SMART_OPEN = '“'
-SMART_CLOSE = '”'
+SMART_OPEN = 'â€œ'
+SMART_CLOSE = 'â€'
 START_CHAR = ('\'', '"', SMART_OPEN)
 
 
@@ -86,7 +86,7 @@ async def is_req_subscribed(bot, user_id, rqfsub_channels):
                 invite_link = invite.invite_link
                 temp.REQ_LINKS[ch_id] = invite_link
 
-            return [InlineKeyboardButton(f"⛔️ Join {chat.title}", url=invite_link, style=enums.ButtonStyle.PRIMARY)]
+            return [InlineKeyboardButton(f"â›”ï¸ Join {chat.title}", url=invite_link, style=enums.ButtonStyle.PRIMARY)]
         except ChatAdminRequired:
             logger.warning(f"Bot not admin in {ch_id}")
         except Exception as e:
@@ -113,7 +113,7 @@ async def is_subscribed(bot, user_id, fsub_channels):
             try:
                 chat = await bot.get_chat(int(channel_id))
                 invite_link = await bot.create_chat_invite_link(channel_id)
-                return InlineKeyboardButton(f"📢 Join {chat.title}", url=invite_link.invite_link)
+                return InlineKeyboardButton(f"ðŸ“¢ Join {chat.title}", url=invite_link.invite_link)
             except Exception as e:
                 logger.warning(f"Failed to create invite for {channel_id}: {e}")
         except Exception as e:
@@ -581,104 +581,104 @@ def extract_request_content(message_text):
     match = re.search(r"<u>(.*?)</u>", message_text)
     if match:
         return match.group(1).strip()
-    match = re.search(r"📝 ʀᴇǫᴜᴇꜱᴛ ?: ?(.*?)(?:\n|$)", message_text)
+    match = re.search(r"ðŸ“ Ê€á´‡Ç«á´œá´‡êœ±á´› ?: ?(.*?)(?:\n|$)", message_text)
     if match:
         return match.group(1).strip()
     return message_text.strip()
 
 def generate_settings_text(settings, title, reset_done=False):
-    note = "\n<b>📌 ɴᴏᴛᴇ :- ʀᴇꜱᴇᴛ ꜱᴜᴄᴄᴇꜱꜱғᴜʟʟʏ ✅</b>" if reset_done else ""
-    return f"""<b>⚙️ ʏᴏᴜʀ sᴇᴛᴛɪɴɢs ꜰᴏʀ - {title}</b>
+    note = "\n<b>ðŸ“Œ É´á´á´›á´‡ :- Ê€á´‡êœ±á´‡á´› êœ±á´œá´„á´„á´‡êœ±êœ±Ò“á´œÊŸÊŸÊ âœ…</b>" if reset_done else ""
+    return f"""<b>âš™ï¸ Êá´á´œÊ€ sá´‡á´›á´›ÉªÉ´É¢s êœ°á´Ê€ - {title}</b>
 
-✅️ <b><u>1sᴛ ᴠᴇʀɪꜰʏ sʜᴏʀᴛɴᴇʀ</u></b>
-<b>ɴᴀᴍᴇ</b> - <code>{settings.get("shortner", "N/A")}</code>
-<b>ᴀᴘɪ</b> - <code>{settings.get("api", "N/A")}</code>
+âœ…ï¸ <b><u>1sá´› á´ á´‡Ê€Éªêœ°Ê sÊœá´Ê€á´›É´á´‡Ê€</u></b>
+<b>É´á´€á´á´‡</b> - <code>{settings.get("shortner", "N/A")}</code>
+<b>á´€á´˜Éª</b> - <code>{settings.get("api", "N/A")}</code>
 
-✅️ <b><u>2ɴᴅ ᴠᴇʀɪꜰʏ sʜᴏʀᴛɴᴇʀ</u></b>
-<b>ɴᴀᴍᴇ</b> - <code>{settings.get("shortner_two", "N/A")}</code>
-<b>ᴀᴘɪ</b> - <code>{settings.get("api_two", "N/A")}</code>
+âœ…ï¸ <b><u>2É´á´… á´ á´‡Ê€Éªêœ°Ê sÊœá´Ê€á´›É´á´‡Ê€</u></b>
+<b>É´á´€á´á´‡</b> - <code>{settings.get("shortner_two", "N/A")}</code>
+<b>á´€á´˜Éª</b> - <code>{settings.get("api_two", "N/A")}</code>
 
-✅️ <b><u>𝟹ʀᴅ ᴠᴇʀɪꜰʏ sʜᴏʀᴛɴᴇʀ</u></b>
-<b>ɴᴀᴍᴇ</b> - <code>{settings.get("shortner_three", "N/A")}</code>
-<b>ᴀᴘɪ</b> - <code>{settings.get("api_three", "N/A")}</code>
+âœ…ï¸ <b><u>ðŸ¹Ê€á´… á´ á´‡Ê€Éªêœ°Ê sÊœá´Ê€á´›É´á´‡Ê€</u></b>
+<b>É´á´€á´á´‡</b> - <code>{settings.get("shortner_three", "N/A")}</code>
+<b>á´€á´˜Éª</b> - <code>{settings.get("api_three", "N/A")}</code>
 
-⏰ <b>2ɴᴅ ᴠᴇʀɪꜰɪᴄᴀᴛɪᴏɴ ᴛɪᴍᴇ</b> - <code>{settings.get("verify_time", "N/A")}</code>
-⏰ <b>𝟹ʀᴅ ᴠᴇʀɪꜰɪᴄᴀᴛɪᴏɴ ᴛɪᴍᴇ</b> - <code>{settings.get("third_verify_time", "N/A")}</code>
+â° <b>2É´á´… á´ á´‡Ê€Éªêœ°Éªá´„á´€á´›Éªá´É´ á´›Éªá´á´‡</b> - <code>{settings.get("verify_time", "N/A")}</code>
+â° <b>ðŸ¹Ê€á´… á´ á´‡Ê€Éªêœ°Éªá´„á´€á´›Éªá´É´ á´›Éªá´á´‡</b> - <code>{settings.get("third_verify_time", "N/A")}</code>
 
-1️⃣ <b>ᴛᴜᴛᴏʀɪᴀʟ ʟɪɴᴋ 1</b> - {settings.get("tutorial", TUTORIAL)}
-2️⃣ <b>ᴛᴜᴛᴏʀɪᴀʟ ʟɪɴᴋ 2</b> - {settings.get("tutorial_2", TUTORIAL_2)}
-3️⃣ <b>ᴛᴜᴛᴏʀɪᴀʟ ʟɪɴᴋ 3</b> - {settings.get("tutorial_3", TUTORIAL_3)}
+1ï¸âƒ£ <b>á´›á´œá´›á´Ê€Éªá´€ÊŸ ÊŸÉªÉ´á´‹ 1</b> - {settings.get("tutorial", TUTORIAL)}
+2ï¸âƒ£ <b>á´›á´œá´›á´Ê€Éªá´€ÊŸ ÊŸÉªÉ´á´‹ 2</b> - {settings.get("tutorial_2", TUTORIAL_2)}
+3ï¸âƒ£ <b>á´›á´œá´›á´Ê€Éªá´€ÊŸ ÊŸÉªÉ´á´‹ 3</b> - {settings.get("tutorial_3", TUTORIAL_3)}
 
-📝 <b>ʟᴏɢ ᴄʜᴀɴɴᴇʟ ɪᴅ</b> - <code>{settings.get("log", "N/A")}</code>
-🚫 <b>ꜰꜱᴜʙ ᴄʜᴀɴɴᴇʟ ɪᴅ</b> - <code>{settings.get("fsub", "N/A")}</code>
+ðŸ“ <b>ÊŸá´É¢ á´„Êœá´€É´É´á´‡ÊŸ Éªá´…</b> - <code>{settings.get("log", "N/A")}</code>
+ðŸš« <b>êœ°êœ±á´œÊ™ á´„Êœá´€É´É´á´‡ÊŸ Éªá´…</b> - <code>{settings.get("fsub") or settings.get("fsub_id", "N/A")}</code>
 
 
-🎯 <b>ɪᴍᴅʙ ᴛᴇᴍᴘʟᴀᴛᴇ</b> - <code>{settings.get("template", "N/A")}</code>
+ðŸŽ¯ <b>Éªá´á´…Ê™ á´›á´‡á´á´˜ÊŸá´€á´›á´‡</b> - <code>{settings.get("template", "N/A")}</code>
 
-📂 <b>ꜰɪʟᴇ ᴄᴀᴘᴛɪᴏɴ</b> - <code>{settings.get("caption", "N/A")}</code>
+ðŸ“‚ <b>êœ°ÉªÊŸá´‡ á´„á´€á´˜á´›Éªá´É´</b> - <code>{settings.get("caption", "N/A")}</code>
 {note}
 """
 
 async def get_settings_text(grp_id, title):
     settings = await get_settings(grp_id)
     verify_status = settings.get('is_verify', IS_VERIFY)
-    verify_text = "ᴏɴ" if verify_status else "ᴏꜰꜰ"
+    verify_text = "á´É´" if verify_status else "á´êœ°êœ°"
     log_channel = settings.get('log')
-    log_text = f"<code>{log_channel}</code>" if log_channel else "ɴᴏᴛ ꜱᴇᴛ"
-    fsub_ids = settings.get('fsub')
+    log_text = f"<code>{log_channel}</code>" if log_channel else "É´á´á´› êœ±á´‡á´›"
+    fsub_ids = settings.get('fsub') or settings.get('fsub_id')
     if fsub_ids:
         if isinstance(fsub_ids, list):
             fsub_text = ", ".join([f"<code>{id}</code>" for id in fsub_ids])
         else:
             fsub_text = f"<code>{fsub_ids}</code>"
     else:
-        fsub_text = "ɴᴏᴛ ꜱᴇᴛ"
+        fsub_text = "É´á´á´› êœ±á´‡á´›"
     text = (
-        f"<b>ᴄʜᴀɴɢᴇ ʏᴏᴜʀ ꜱᴇᴛᴛɪɴɢꜱ ꜰᴏʀ {title} ᴀꜱ ʏᴏᴜ ᴡɪꜱʜ ⚙\n\n"
-        f"✅ ᴠᴇʀɪꜰɪᴄᴀᴛɪᴏɴ : {verify_text}\n"
-        f"📝 ʟᴏɢ ᴄʜᴀɴɴᴇʟ : {log_text}\n"
-        f"🚫 ꜰꜱᴜʙ ᴄʜᴀɴɴᴇʟ : {fsub_text}</b>"
+        f"<b>á´„Êœá´€É´É¢á´‡ Êá´á´œÊ€ êœ±á´‡á´›á´›ÉªÉ´É¢êœ± êœ°á´Ê€ {title} á´€êœ± Êá´á´œ á´¡Éªêœ±Êœ âš™\n\n"
+        f"âœ… á´ á´‡Ê€Éªêœ°Éªá´„á´€á´›Éªá´É´ : {verify_text}\n"
+        f"ðŸ“ ÊŸá´É¢ á´„Êœá´€É´É´á´‡ÊŸ : {log_text}\n"
+        f"ðŸš« êœ°êœ±á´œÊ™ á´„Êœá´€É´É´á´‡ÊŸ : {fsub_text}</b>"
     )
     return text
 
 async def group_setting_buttons(grp_id):
     settings = await get_settings(grp_id)
     buttons = [[
-                InlineKeyboardButton('ʀᴇꜱᴜʟᴛ ᴘᴀɢᴇ', callback_data=f'setgs#button#{settings.get("button")}#{grp_id}',),
-                InlineKeyboardButton('ʙᴜᴛᴛᴏɴ' if settings.get("button") else 'ᴛᴇxᴛ', callback_data=f'setgs#button#{settings.get("button")}#{grp_id}',),
+                InlineKeyboardButton('Ê€á´‡êœ±á´œÊŸá´› á´˜á´€É¢á´‡', callback_data=f'setgs#button#{settings.get("button")}#{grp_id}',),
+                InlineKeyboardButton('Ê™á´œá´›á´›á´É´' if settings.get("button") else 'á´›á´‡xá´›', callback_data=f'setgs#button#{settings.get("button")}#{grp_id}',),
             ],[
-                InlineKeyboardButton('ꜰɪʟᴇ ꜱᴇᴄᴜʀᴇ', callback_data=f'setgs#file_secure#{settings["file_secure"]}#{grp_id}',),
-                InlineKeyboardButton('✔ Oɴ' if settings["file_secure"] else '✘ Oғғ', callback_data=f'setgs#file_secure#{settings["file_secure"]}#{grp_id}',),
+                InlineKeyboardButton('êœ°ÉªÊŸá´‡ êœ±á´‡á´„á´œÊ€á´‡', callback_data=f'setgs#file_secure#{settings["file_secure"]}#{grp_id}',),
+                InlineKeyboardButton('âœ” OÉ´' if settings["file_secure"] else 'âœ˜ OÒ“Ò“', callback_data=f'setgs#file_secure#{settings["file_secure"]}#{grp_id}',),
             ],[
-                InlineKeyboardButton('ɪᴍᴅʙ ᴘᴏꜱᴛᴇʀ', callback_data=f'setgs#imdb#{settings["imdb"]}#{grp_id}',),
-                InlineKeyboardButton('✔ Oɴ' if settings["imdb"] else '✘ Oғғ', callback_data=f'setgs#imdb#{settings["imdb"]}#{grp_id}',),
+                InlineKeyboardButton('Éªá´á´…Ê™ á´˜á´êœ±á´›á´‡Ê€', callback_data=f'setgs#imdb#{settings["imdb"]}#{grp_id}',),
+                InlineKeyboardButton('âœ” OÉ´' if settings["imdb"] else 'âœ˜ OÒ“Ò“', callback_data=f'setgs#imdb#{settings["imdb"]}#{grp_id}',),
             ],[
-                InlineKeyboardButton('ᴡᴇʟᴄᴏᴍᴇ ᴍꜱɢ', callback_data=f'setgs#welcome#{settings["welcome"]}#{grp_id}',),
-                InlineKeyboardButton('✔ Oɴ' if settings["welcome"] else '✘ Oғғ', callback_data=f'setgs#welcome#{settings["welcome"]}#{grp_id}',),
+                InlineKeyboardButton('á´¡á´‡ÊŸá´„á´á´á´‡ á´êœ±É¢', callback_data=f'setgs#welcome#{settings["welcome"]}#{grp_id}',),
+                InlineKeyboardButton('âœ” OÉ´' if settings["welcome"] else 'âœ˜ OÒ“Ò“', callback_data=f'setgs#welcome#{settings["welcome"]}#{grp_id}',),
             ],[
-                InlineKeyboardButton('ᴀᴜᴛᴏ ᴅᴇʟᴇᴛᴇ', callback_data=f'setgs#auto_delete#{settings["auto_delete"]}#{grp_id}',),
-                InlineKeyboardButton('✔ Oɴ' if settings["auto_delete"] else '✘ Oғғ', callback_data=f'setgs#auto_delete#{settings["auto_delete"]}#{grp_id}',),
+                InlineKeyboardButton('á´€á´œá´›á´ á´…á´‡ÊŸá´‡á´›á´‡', callback_data=f'setgs#auto_delete#{settings["auto_delete"]}#{grp_id}',),
+                InlineKeyboardButton('âœ” OÉ´' if settings["auto_delete"] else 'âœ˜ OÒ“Ò“', callback_data=f'setgs#auto_delete#{settings["auto_delete"]}#{grp_id}',),
             ],[
-                InlineKeyboardButton('ᴍᴀx ʙᴜᴛᴛᴏɴꜱ', callback_data=f'setgs#max_btn#{settings["max_btn"]}#{grp_id}',),
+                InlineKeyboardButton('á´á´€x Ê™á´œá´›á´›á´É´êœ±', callback_data=f'setgs#max_btn#{settings["max_btn"]}#{grp_id}',),
                 InlineKeyboardButton('10' if settings["max_btn"] else f'{MAX_B_TN}', callback_data=f'setgs#max_btn#{settings["max_btn"]}#{grp_id}',),
             ],[
-                InlineKeyboardButton('ꜱᴘᴇʟʟ ᴄʜᴇᴄᴋ',callback_data=f'setgs#spell_check#{settings["spell_check"]}#{str(grp_id)}'),
-                InlineKeyboardButton('✔ Oɴ' if settings["spell_check"] else '✘ Oғғ',callback_data=f'setgs#spell_check#{settings["spell_check"]}#{str(grp_id)}')
+                InlineKeyboardButton('êœ±á´˜á´‡ÊŸÊŸ á´„Êœá´‡á´„á´‹',callback_data=f'setgs#spell_check#{settings["spell_check"]}#{str(grp_id)}'),
+                InlineKeyboardButton('âœ” OÉ´' if settings["spell_check"] else 'âœ˜ OÒ“Ò“',callback_data=f'setgs#spell_check#{settings["spell_check"]}#{str(grp_id)}')
             ],[
-                InlineKeyboardButton('Vᴇʀɪғʏ', callback_data=f'setgs#is_verify#{settings.get("is_verify", IS_VERIFY)}#{grp_id}'),
-                InlineKeyboardButton('✔ Oɴ' if settings.get("is_verify", IS_VERIFY) else '✘ Oғғ', callback_data=f'setgs#is_verify#{settings.get("is_verify", IS_VERIFY)}#{grp_id}'),
+                InlineKeyboardButton('Vá´‡Ê€ÉªÒ“Ê', callback_data=f'setgs#is_verify#{settings.get("is_verify", IS_VERIFY)}#{grp_id}'),
+                InlineKeyboardButton('âœ” OÉ´' if settings.get("is_verify", IS_VERIFY) else 'âœ˜ OÒ“Ò“', callback_data=f'setgs#is_verify#{settings.get("is_verify", IS_VERIFY)}#{grp_id}'),
             ],[
-                InlineKeyboardButton('ᴠᴇʀɪꜰɪᴄᴀᴛɪᴏɴ', callback_data=f'verification_setgs#{grp_id}'),
-                InlineKeyboardButton('ʟᴏɢ ᴄʜᴀɴɴᴇʟ', callback_data=f'log_setgs#{grp_id}'),
+                InlineKeyboardButton('á´ á´‡Ê€Éªêœ°Éªá´„á´€á´›Éªá´É´', callback_data=f'verification_setgs#{grp_id}'),
+                InlineKeyboardButton('ÊŸá´É¢ á´„Êœá´€É´É´á´‡ÊŸ', callback_data=f'log_setgs#{grp_id}'),
             ],[
-                InlineKeyboardButton('ꜱᴇᴛ ᴄᴀᴘᴛɪᴏɴ', callback_data=f'caption_setgs#{grp_id}'),
-                InlineKeyboardButton('ᴄᴜꜱᴛᴏᴍ ꜰꜱᴜʙ', callback_data=f'fsub_setgs#{grp_id}'),
+                InlineKeyboardButton('êœ±á´‡á´› á´„á´€á´˜á´›Éªá´É´', callback_data=f'caption_setgs#{grp_id}'),
+                InlineKeyboardButton('á´„á´œêœ±á´›á´á´ êœ°êœ±á´œÊ™', callback_data=f'fsub_setgs#{grp_id}'),
             ],[
-                InlineKeyboardButton("Dᴇʟᴇᴛᴇ Gʀᴏᴜᴘ", callback_data=f"delete_group_check#{grp_id}", style=enums.ButtonStyle.DANGER)
+                InlineKeyboardButton("Dá´‡ÊŸá´‡á´›á´‡ GÊ€á´á´œá´˜", callback_data=f"delete_group_check#{grp_id}", style=enums.ButtonStyle.DANGER)
             ],[
-                InlineKeyboardButton("Rᴇᴍᴏᴠᴇ Gʀᴏᴜᴘ Cᴏɴɴᴇᴄᴛɪᴏɴ", callback_data=f"removegrp#{grp_id}", style=enums.ButtonStyle.DANGER)
+                InlineKeyboardButton("Rá´‡á´á´á´ á´‡ GÊ€á´á´œá´˜ Cá´É´É´á´‡á´„á´›Éªá´É´", callback_data=f"removegrp#{grp_id}", style=enums.ButtonStyle.DANGER)
             ],[
-                InlineKeyboardButton('⇋ ᴄʟᴏꜱᴇ ꜱᴇᴛᴛɪɴɢꜱ ᴍᴇɴᴜ ⇋', callback_data='close_data', style=enums.ButtonStyle.DANGER)
+                InlineKeyboardButton('â‡‹ á´„ÊŸá´êœ±á´‡ êœ±á´‡á´›á´›ÉªÉ´É¢êœ± á´á´‡É´á´œ â‡‹', callback_data='close_data', style=enums.ButtonStyle.DANGER)
     ]]
     return buttons
 
@@ -742,7 +742,7 @@ def list_to_str(k):
 def last_online(from_user):
     time = ""
     if from_user.is_bot:
-        time += "🤖 Bot :("
+        time += "ðŸ¤– Bot :("
     elif from_user.status == enums.UserStatus.RECENTLY:
         time += "Recently"
     elif from_user.status == enums.UserStatus.LAST_WEEK:
@@ -897,14 +897,14 @@ async def log_error(client, error_message):
     try:
         await client.send_message(
             chat_id=LOG_CHANNEL, 
-            text=f"<b>⚠️ Error Log:</b>\n<code>{error_message}</code>"
+            text=f"<b>âš ï¸ Error Log:</b>\n<code>{error_message}</code>"
         )
     except Exception as e:
         logger.error("Failed to log error: %s", e)
 
 
 def get_time(seconds):
-    periods = [(' ᴅᴀʏs', 86400), (' ʜᴏᴜʀ', 3600), (' ᴍɪɴᴜᴛᴇ', 60), (' sᴇᴄᴏɴᴅ', 1)]
+    periods = [(' á´…á´€Ês', 86400), (' Êœá´á´œÊ€', 3600), (' á´ÉªÉ´á´œá´›á´‡', 60), (' sá´‡á´„á´É´á´…', 1)]
     result = ''
     for period_name, period_seconds in periods:
         if seconds >= period_seconds:
@@ -1062,18 +1062,18 @@ async def get_cap(settings, remaining_seconds, files, query, total_results, sear
                 else:
                     if ULTRA_FAST_MODE:
                         cap = (
-                            f"<b>🏷 ᴛɪᴛʟᴇ : <code>{search}</code>\n"
-                            f"⏰ ʀᴇsᴜʟᴛ ɪɴ : <code>{remaining_seconds} Sᴇᴄᴏɴᴅs</code>\n\n"
-                            f"📝 ʀᴇǫᴜᴇsᴛᴇᴅ ʙʏ : {query.from_user.mention}\n"
-                            f"⚜️ ᴘᴏᴡᴇʀᴇᴅ ʙʏ : {query.message.chat.title or temp.B_LINK or 'ᴩʀᴏᴠɪᴅᴇʀʙᴏᴛᴢ'}\n</b>"
+                            f"<b>ðŸ· á´›Éªá´›ÊŸá´‡ : <code>{search}</code>\n"
+                            f"â° Ê€á´‡sá´œÊŸá´› ÉªÉ´ : <code>{remaining_seconds} Sá´‡á´„á´É´á´…s</code>\n\n"
+                            f"ðŸ“ Ê€á´‡Ç«á´œá´‡sá´›á´‡á´… Ê™Ê : {query.from_user.mention}\n"
+                            f"âšœï¸ á´˜á´á´¡á´‡Ê€á´‡á´… Ê™Ê : {query.message.chat.title or temp.B_LINK or 'á´©Ê€á´á´ Éªá´…á´‡Ê€Ê™á´á´›á´¢'}\n</b>"
                         )
                     else:
                         cap = (
-                            f"<b>🏷 ᴛɪᴛʟᴇ : <code>{search}</code>\n"
-                            f"🧱 ᴛᴏᴛᴀʟ ꜰɪʟᴇꜱ : <code>{total_results}</code>\n"
-                            f"⏰ ʀᴇsᴜʟᴛ ɪɴ : <code>{remaining_seconds} Sᴇᴄᴏɴᴅs</code>\n\n"
-                            f"📝 ʀᴇǫᴜᴇsᴛᴇᴅ ʙʏ : {query.from_user.mention}\n"
-                            f"⚜️ ᴘᴏᴡᴇʀᴇᴅ ʙʏ : {query.message.chat.title or temp.B_LINK or 'ᴩʀᴏᴠɪᴅᴇʀʙᴏᴛᴢ'}\n</b>"
+                            f"<b>ðŸ· á´›Éªá´›ÊŸá´‡ : <code>{search}</code>\n"
+                            f"ðŸ§± á´›á´á´›á´€ÊŸ êœ°ÉªÊŸá´‡êœ± : <code>{total_results}</code>\n"
+                            f"â° Ê€á´‡sá´œÊŸá´› ÉªÉ´ : <code>{remaining_seconds} Sá´‡á´„á´É´á´…s</code>\n\n"
+                            f"ðŸ“ Ê€á´‡Ç«á´œá´‡sá´›á´‡á´… Ê™Ê : {query.from_user.mention}\n"
+                            f"âšœï¸ á´˜á´á´¡á´‡Ê€á´‡á´… Ê™Ê : {query.message.chat.title or temp.B_LINK or 'á´©Ê€á´á´ Éªá´…á´‡Ê€Ê™á´á´›á´¢'}\n</b>"
                         )
                     cap += "\n\n<u>Your Requested Files Are Here</u> \n\n</b>"
                     for idx, file in enumerate(files, start=offset + 1):
@@ -1089,17 +1089,17 @@ async def get_cap(settings, remaining_seconds, files, query, total_results, sear
         else:
             if ULTRA_FAST_MODE:
                 cap = (
-                    f"<b>🏷 ᴛɪᴛʟᴇ : <code>{search}</code>\n"
-                    f"⏰ ʀᴇsᴜʟᴛ ɪɴ : <code>{remaining_seconds} Sᴇᴄᴏɴᴅs</code>\n\n"
-                    f"⚜️ ᴘᴏᴡᴇʀᴇᴅ ʙʏ : ⚡ {query.message.chat.title or temp.B_LINK or 'ᴅʀᴇᴀᴍxʙᴏᴛᴢ'}\n</b>"
+                    f"<b>ðŸ· á´›Éªá´›ÊŸá´‡ : <code>{search}</code>\n"
+                    f"â° Ê€á´‡sá´œÊŸá´› ÉªÉ´ : <code>{remaining_seconds} Sá´‡á´„á´É´á´…s</code>\n\n"
+                    f"âšœï¸ á´˜á´á´¡á´‡Ê€á´‡á´… Ê™Ê : âš¡ {query.message.chat.title or temp.B_LINK or 'á´…Ê€á´‡á´€á´xÊ™á´á´›á´¢'}\n</b>"
                 )
             else:
                 cap = (
-                    f"<b>🏷 ᴛɪᴛʟᴇ : <code>{search}</code>\n"
-                    f"🧱 ᴛᴏᴛᴀʟ ꜰɪʟᴇꜱ : <code>{total_results}</code>\n"
-                    f"⏰ ʀᴇsᴜʟᴛ ɪɴ : <code>{remaining_seconds} Sᴇᴄᴏɴᴅs</code>\n\n"
-                    f"📝 ʀᴇǫᴜᴇsᴛᴇᴅ ʙʏ : {query.from_user.mention}\n"
-                    f"⚜️ ᴘᴏᴡᴇʀᴇᴅ ʙʏ : {query.message.chat.title or temp.B_LINK or 'ᴅʀᴇᴀᴍxʙᴏᴛᴢ'}\n</b>"
+                    f"<b>ðŸ· á´›Éªá´›ÊŸá´‡ : <code>{search}</code>\n"
+                    f"ðŸ§± á´›á´á´›á´€ÊŸ êœ°ÉªÊŸá´‡êœ± : <code>{total_results}</code>\n"
+                    f"â° Ê€á´‡sá´œÊŸá´› ÉªÉ´ : <code>{remaining_seconds} Sá´‡á´„á´É´á´…s</code>\n\n"
+                    f"ðŸ“ Ê€á´‡Ç«á´œá´‡sá´›á´‡á´… Ê™Ê : {query.from_user.mention}\n"
+                    f"âšœï¸ á´˜á´á´¡á´‡Ê€á´‡á´… Ê™Ê : {query.message.chat.title or temp.B_LINK or 'á´…Ê€á´‡á´€á´xÊ™á´á´›á´¢'}\n</b>"
                 )
 
             cap += "\n\n<u>Your Requested Files Are Here</u>\n\n</b>"
