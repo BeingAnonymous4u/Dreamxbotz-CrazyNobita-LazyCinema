@@ -281,13 +281,20 @@ async def start(client, message):
             try:
                 btn = []
                 chat = grp_id
-                settings      = await get_settings(chat)
-                fsub_channels = list(dict.fromkeys((settings.get('fsub', []) if settings else [])+ AUTH_CHANNELS)) 
+                settings = await get_settings(chat) if chat else None
+                custom_fsub = (settings.get('fsub') or settings.get('fsub_id')) if settings else None
 
-                if fsub_channels:
-                    btn += await is_subscribed(client, message.from_user.id, fsub_channels)
-                if AUTH_REQ_CHANNELS:
-                    btn += await is_req_subscribed(client, message.from_user.id, AUTH_REQ_CHANNELS)
+                if custom_fsub:
+                    if not isinstance(custom_fsub, list):
+                        custom_fsub = [custom_fsub]
+                    custom_fsub_ids = [int(x) for x in custom_fsub if x]
+                    if custom_fsub_ids:
+                        btn += await is_subscribed(client, message.from_user.id, custom_fsub_ids)
+                else:
+                    if AUTH_CHANNELS:
+                        btn += await is_subscribed(client, message.from_user.id, AUTH_CHANNELS)
+                    if AUTH_REQ_CHANNELS:
+                        btn += await is_req_subscribed(client, message.from_user.id, AUTH_REQ_CHANNELS)
                 if btn:
                     if len(message.command) > 1 and "_" in message.command[1]:
                         kk, file_id = message.command[1].split("_", 1)
@@ -1281,7 +1288,7 @@ async def reset_group_callback(client, callback_query):
         'caption': CUSTOM_FILE_CAPTION,
         'log': LOG_CHANNEL,
         'is_verify': IS_VERIFY,
-        'fsub': AUTH_CHANNELS
+        'fsub': None
     }
     current = await get_settings(grp_id)
     if current == defaults:
@@ -1357,6 +1364,7 @@ async def set_fsub(client, message):
             channel_titles.append(f"{chat.title} (`{id}`)")
             channels += f'{chat.title}\n'
         await save_group_settings(grp_id, 'fsub', fsub_ids)
+        await save_group_settings(grp_id, 'fsub_id', fsub_ids)
         await message.reply_text(f"sᴜᴄᴄᴇssғᴜʟʟʏ sᴇᴛ ꜰꜱᴜʙ ᴄʜᴀɴɴᴇʟ(ꜱ) ғᴏʀ {title} ᴛᴏ\n\n{channels}")
         mention = message.from_user.mention if message.from_user else "Unknown"
         await client.send_message(
@@ -1425,11 +1433,12 @@ async def remove_fsub(client, message):
             )
         option = args[1].strip()
         settings = await get_settings(grp_id)
-        cr_fsubs = settings.get("fsub", []) if settings else []
+        cr_fsubs = (settings.get("fsub") or settings.get("fsub_id") or []) if settings else []
         if not cr_fsubs:
             return await message.reply_text("ɴᴏ ғsᴜʙ ᴄʜᴀɴɴᴇʟs ᴀʀᴇ sᴇᴛ ғᴏʀ ᴛʜɪs ɢʀᴏᴜᴘ.")
         if option.lower() == "all":
             await save_group_settings(grp_id, 'fsub', [])
+            await save_group_settings(grp_id, 'fsub_id', [])
             await message.reply_text(f"✅ ᴀʟʟ ғsᴜʙ ᴄʜᴀɴɴᴇʟs ʀᴇᴍᴏᴠᴇᴅ ғᴏʀ {title}")
             return await client.send_message(
                 LOG_API_CHANNEL,
@@ -1445,6 +1454,7 @@ async def remove_fsub(client, message):
         if not r_id:
             return await message.reply_text("ɴᴏɴᴇ ᴏғ ᴛʜᴇ ɢɪᴠᴇɴ ɪᴅs ᴡᴇʀᴇ ғᴏᴜɴᴅ ɪɴ ᴛʜᴇ ᴄᴜʀʀᴇɴᴛ ғsᴜʙ ʟɪsᴛ.")
         await save_group_settings(grp_id, 'fsub', new_fsubs)
+        await save_group_settings(grp_id, 'fsub_id', new_fsubs)
         r_t = []
         for cid in r_id:
             try:
