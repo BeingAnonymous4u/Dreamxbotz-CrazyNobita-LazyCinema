@@ -13,7 +13,7 @@ from info import (
     EMOJI_MODE, GRP_LNK, LANDSCAPE_POSTER, LANGUAGES, LOG_CHANNEL, MAX_B_TN, MSG_ALRT,
     MULTIPLE_DB, NO_RESULTS_MSG, OWNER_LNK, OWNER_UPI_ID, PICS, PICS_URL, QR_CODE, QUALITIES,
     REACTIONS, REQST_CHANNEL, SEASONS, STAR_PREMIUM_PLANS, SUBSCRIPTION, SUPPORT_CHAT_ID,
-    TMDB_ON_SEARCH, TMDB_POSTER, ULTRA_FAST_MODE, UPDATE_CHNL_LNK, URL
+    TMDB_ON_SEARCH, TMDB_POSTER, ULTRA_FAST_MODE, UPDATE_CHNL_LNK, URL, FQDN, PORT
 )
 from Script import script
 from pyrogram.errors.exceptions.bad_request_400 import MediaEmpty, PhotoInvalidDimensions, WebpageMediaEmpty
@@ -911,10 +911,25 @@ async def cb_handler(client: Client, query: CallbackQuery):
             ident, kk, file_id = query.data.split("#")
             btn = []
             chat = file_id.split("_")[0]
-            settings = await get_settings(chat)
-            fsub_channels = list(dict.fromkeys((settings.get('fsub', []) if settings else [])+ AUTH_CHANNELS)) 
-            btn += await is_subscribed(client, query.from_user.id, fsub_channels)
-            btn += await is_req_subscribed(client, query.from_user.id, AUTH_REQ_CHANNELS)
+            try:
+                chat_id = int(chat)
+            except Exception:
+                chat_id = 0
+
+            settings = await get_settings(chat_id) if chat_id else None
+            custom_fsub = (settings.get('fsub') or settings.get('fsub_id')) if settings else None
+
+            if custom_fsub:
+                if not isinstance(custom_fsub, list):
+                    custom_fsub = [custom_fsub]
+                custom_fsub_ids = [int(x) for x in custom_fsub if x]
+                if custom_fsub_ids:
+                    btn += await is_subscribed(client, query.from_user.id, custom_fsub_ids)
+            else:
+                if AUTH_CHANNELS:
+                    btn += await is_subscribed(client, query.from_user.id, AUTH_CHANNELS)
+                if AUTH_REQ_CHANNELS:
+                    btn += await is_req_subscribed(client, query.from_user.id, AUTH_REQ_CHANNELS)
             if btn:
                 btn.append([InlineKeyboardButton("♻️ ᴛʀʏ ᴀɢᴀɪɴ ♻️", callback_data=f"checksub#{kk}#{file_id}", style=enums.ButtonStyle.PRIMARY)])
                 try:
@@ -1133,40 +1148,227 @@ async def cb_handler(client: Client, query: CallbackQuery):
     elif DreamxData.startswith("generate_stream_link"):
         _, file_id = DreamxData.split(":")
         try:
+            target_channel = BIN_CHANNEL
+            if not target_channel or target_channel == -100:
+                if LOG_CHANNEL and LOG_CHANNEL != -100:
+                    target_channel = LOG_CHANNEL
+                else:
+                    logger.error("Neither BIN_CHANNEL nor LOG_CHANNEL is valid.")
+                    try:
+                        await client.send_cached_media(
+                            chat_id=query.from_user.id,
+                            file_id=file_id,
+                            caption="✅ <b>Here is your file directly!</b>\n\n⚠️ <i>Admin Note: BIN_CHANNEL/LOG_CHANNEL is not set with -100 ID in .env.</i>"
+                        )
+                        await query.answer("✅ Sent file directly to your PM!\n(Stream requires valid channel setup)", show_alert=True)
+                        return
+                    except Exception as fallback_err:
+                        logger.error("Direct send failed: %s", fallback_err)
+                        await query.answer("⚠️ BIN_CHANNEL / LOG_CHANNEL is not configured!\nAdd bot as Admin with -100 ID in .env.", show_alert=True)
+                        return
+
             user_id = query.from_user.id
-            username = query.from_user.mention
-            log_msg = await client.send_cached_media(chat_id=BIN_CHANNEL, file_id=file_id,)
-            fileName = quote_plus(get_name(log_msg))
-            dreamx_stream = f"{URL}watch/{str(log_msg.id)}/{quote_plus(get_name(log_msg))}?hash={get_hash(log_msg)}"
-            dreamx_download = f"{URL}{str(log_msg.id)}/{quote_plus(get_name(log_msg))}?hash={get_hash(log_msg)}"
-            await query.answer(MSG_ALRT)
-            await asyncio.sleep(1)
-            await log_msg.reply_text(
-                text=(
+            username = query.from_user.mention if query.from_user else f"User {user_id}"
+            log_msg = None
+
+            # 1. Attempt to send cached media to target_channel (with fallback to LOG_CHANNEL)
+            try:
+                log_msg = await client.send_cached_media(chat_id=target_channel, file_id=file_id)
+            except Exception as channel_err:
+                logger.warning("Failed sending to channel %s: %s", target_channel, channel_err)
+                if target_channel != LOG_CHANNEL and LOG_CHANNEL and LOG_CHANNEL != -100:
+                    logger.info("Attempting fallback to LOG_CHANNEL: %s", LOG_CHANNEL)
+                    try:
+                        log_msg = await client.send_cached_media(chat_id=LOG_CHANNEL, file_id=file_id)
+                        target_channel = LOG_CHANNEL
+                    except Exception as log_err:
+                        logger.error("Fallback to LOG_CHANNEL also failed: %s", log_err)
+
+            # If sending to channel failed completely, send directly to user PM
+            if not log_msg:
+                try:
+                    await client.send_cached_media(
+                        chat_id=query.from_user.id,
+                        file_id=file_id,
+                        caption="✅ <b>Here is your file directly!</b>\n\n⚠️ <i>Stream setup failed: Ensure bot is Admin in your channel and channel ID starts with -100.</i>"
+                    )
+                    await query.answer("✅ Sent file directly to your PM!\n\nFix Channel: Ensure ID starts with -100 & Bot is Admin.", show_alert=True)
+                    return
+                except Exception as dm_err:
+                    logger.error("Direct PM send error: %s", dm_err)
+                    await query.answer("⚠️ [400 CHAT_ID_INVALID]\nBot is not an Admin in channel!\n\n1. Channel ID must start with -100\n2. Add bot as Admin with 'Post Messages' rights.", show_alert=True)
+                    return
+
+            # 2. Extract safe filename and hash (never crashes if filename is None)
+            raw_file_name = get_name(log_msg) or getattr(log_msg, 'caption', None) or 'file'
+            file_name_clean = str(raw_file_name).strip() if raw_file_name else 'file'
+            fileName = quote_plus(file_name_clean)
+            file_hash = get_hash(log_msg) if hasattr(log_msg, 'id') else ''
+
+            # 3. URL Validator: Telegram buttons strictly require valid http/https schemes with valid hosts (no localhost/0.0.0.0)
+            def _is_valid_url(u: str) -> bool:
+                if not u or not isinstance(u, str):
+                    return False
+                val = u.strip()
+                if not (val.startswith("https://") or val.startswith("http://") or val.startswith("tg://")):
+                    return False
+                low = val.lower()
+                for bad in ["localhost", "0.0.0.0", "127.0.0.1", "http://:/", "https://:/"]:
+                    if bad in low:
+                        return False
+                host = re.sub(r'^https?://', '', val).split('/')[0].split(':')[0]
+                return bool(host and '.' in host)
+
+            stream_base_url = URL.strip() if (URL and _is_valid_url(URL)) else ""
+            if not stream_base_url and FQDN and _is_valid_url(f"https://{FQDN}/"):
+                stream_base_url = f"https://{FQDN}/"
+
+            has_valid_url = bool(stream_base_url and _is_valid_url(stream_base_url))
+
+            if has_valid_url:
+                if not stream_base_url.endswith("/"):
+                    stream_base_url += "/"
+                dreamx_stream = f"{stream_base_url}watch/{str(log_msg.id)}/{fileName}?hash={file_hash}"
+                dreamx_download = f"{stream_base_url}{str(log_msg.id)}/{fileName}?hash={file_hash}"
+            else:
+                dreamx_stream = ""
+                dreamx_download = ""
+
+            # Clean UPDATE_CHNL_LNK
+            clean_update = str(UPDATE_CHNL_LNK).strip() if UPDATE_CHNL_LNK else ""
+            if clean_update.startswith("@"):
+                clean_update = f"https://t.me/{clean_update[1:]}"
+            elif clean_update and not clean_update.startswith("http"):
+                clean_update = f"https://t.me/{clean_update}"
+            if not clean_update or not _is_valid_url(clean_update):
+                clean_update = "https://t.me/telegram"
+
+            # 4. Post log notification to the channel (target_channel)
+            log_btn = []
+            if has_valid_url:
+                log_btn = [[
+                    InlineKeyboardButton("🚀 ꜰᴀꜱᴛ ᴅᴏᴡɴʟᴏᴀᴅ", url=dreamx_download),
+                    InlineKeyboardButton('🖥️ ᴡᴀᴛᴄʜ ᴏɴʟɪɴᴇ', url=dreamx_stream)
+                ]]
+
+            log_text = (
                 f"•• ʟɪɴᴋ ɢᴇɴᴇʀᴀᴛᴇᴅ ꜰᴏʀ ɪᴅ #{user_id}\n"
                 f"•• ᴜꜱᴇʀɴᴀᴍᴇ : {username}\n\n"
-                f"•• ᖴᎥᒪᗴ Nᗩᗰᗴ : {fileName}"
-            ),
-                reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton("🚀 ꜰᴀꜱᴛ ᴅᴏᴡɴʟᴏᴀᴅ ", url=dreamx_download),  # we download Link
-                                                    InlineKeyboardButton(' ᴡᴀᴛᴄʜ ᴏɴʟɪɴᴇ 🖥️', url=dreamx_stream)]])  # web stream Link
+                f"•• ᖴᎥᒪᗴ Nᗩᗰᗴ : {file_name_clean}"
             )
-            dreamcinezone = await query.edit_message_reply_markup(
-                reply_markup=InlineKeyboardMarkup([
-                    [
-                        InlineKeyboardButton("🚀 ꜰᴀꜱᴛ ᴅᴏᴡɴʟᴏᴀᴅ ", url=dreamx_download, style=enums.ButtonStyle.PRIMARY),
-                        InlineKeyboardButton('🖥️ ᴡᴀᴛᴄʜ ᴏɴʟɪɴᴇ 🖥️', url=dreamx_stream, style=enums.ButtonStyle.SUCCESS)
-                    ],
-                    [
-                        InlineKeyboardButton('🌹 𝐉ᴏɪɴ 𝐔ᴩᴅᴀᴛᴇꜱ 𝐂ʜᴀɴɴᴇʟ 🌹', url=UPDATE_CHNL_LNK, style=enums.ButtonStyle.DANGER)
-                    ]
-                ])
+            if not has_valid_url:
+                log_text += "\n\n⚠️ <i>Note: Streaming URL pending (set FQDN in .env)</i>"
+
+            # Send to channel (first try reply_to_message_id, then direct)
+            try:
+                await client.send_message(
+                    chat_id=target_channel,
+                    text=log_text,
+                    reply_to_message_id=log_msg.id,
+                    reply_markup=InlineKeyboardMarkup(log_btn) if log_btn else None
+                )
+            except Exception as reply_err:
+                try:
+                    await client.send_message(
+                        chat_id=target_channel,
+                        text=log_text,
+                        reply_markup=InlineKeyboardMarkup(log_btn) if log_btn else None
+                    )
+                except Exception as send_err:
+                    logger.warning("Could not send link log to channel: %s", send_err)
+
+            # 5. Update user message buttons or provide fallback
+            if has_valid_url:
+                try:
+                    await query.answer(MSG_ALRT)
+                except Exception:
+                    pass
+
+                try:
+                    dreamcinezone = await query.edit_message_reply_markup(
+                        reply_markup=InlineKeyboardMarkup([
+                            [
+                                InlineKeyboardButton("🚀 ꜰᴀꜱᴛ ᴅᴏᴡɴʟᴏᴀᴅ ", url=dreamx_download, style=enums.ButtonStyle.PRIMARY),
+                                InlineKeyboardButton('🖥️ ᴡᴀᴛᴄʜ ᴏɴʟɪɴᴇ 🖥️', url=dreamx_stream, style=enums.ButtonStyle.SUCCESS)
+                            ],
+                            [
+                                InlineKeyboardButton('🌹 𝐉ᴏɪɴ 𝐔ᴩᴅᴀᴛᴇꜱ 𝐂ʜᴀɴɴᴇʟ 🌹', url=clean_update, style=enums.ButtonStyle.DANGER)
+                            ]
+                        ])
+                    )
+                    if DELETE_TIME:
+                        await asyncio.sleep(DELETE_TIME)
+                        try:
+                            await dreamcinezone.delete()
+                        except Exception:
+                            pass
+                    return
+                except Exception as edit_err:
+                    logger.error("Failed to edit reply markup with stream URLs: %s", edit_err)
+
+            # If no valid streaming URL (e.g. FQDN not configured in .env):
+            # Send file directly to user PM so user is never left without the movie!
+            try:
+                await client.send_cached_media(
+                    chat_id=query.from_user.id,
+                    file_id=file_id,
+                    caption=(
+                        f"✅ <b>{file_name_clean}</b>\n\n"
+                        f"⚠️ <b>Web Streaming Pending Configuration</b>\n"
+                        f"<i>Web Stream & Fast Download buttons require a public bot domain. Set <code>FQDN=your-bot.onrender.com</code> in your .env file!</i>"
+                    )
+                )
+            except Exception as direct_err:
+                logger.warning("Direct send to user PM failed: %s", direct_err)
+
+            try:
+                await query.edit_message_reply_markup(
+                    reply_markup=InlineKeyboardMarkup([
+                        [
+                            InlineKeyboardButton('🌹 𝐉ᴏɪɴ 𝐔ᴩᴅᴀᴛᴇꜱ 𝐂ʜᴀɴɴᴇʟ 🌹', url=clean_update, style=enums.ButtonStyle.DANGER)
+                        ]
+                    ])
+                )
+            except Exception:
+                pass
+
+            await query.answer(
+                "⚠️ FQDN is not configured in .env!\n\n"
+                "1. Add FQDN=your-bot.onrender.com in your bot's environment variables (Render/VPS).\n"
+                "2. File has been sent directly to your PM!",
+                show_alert=True
             )
-            await asyncio.sleep(DELETE_TIME)
-            await dreamcinezone.delete()
             return
+
         except Exception as e:
-            logger.error("Callback error: %s", e)
-            await query.answer(f"⚠️ SOMETHING WENT WRONG STREAM LINK  \n\n{e}", show_alert=True)
+            logger.error("Callback error in generate_stream_link: %s", e)
+            err_msg = str(e)
+            if "CHAT_ID_INVALID" in err_msg:
+                try:
+                    await client.send_cached_media(
+                        chat_id=query.from_user.id,
+                        file_id=file_id,
+                        caption="✅ <b>Here is your file directly!</b>\n\n⚠️ <i>Fix BIN_CHANNEL: Add bot as Admin in your channel and ensure ID starts with -100!</i>"
+                    )
+                    await query.answer("✅ Sent file directly to your PM!\n(Fix BIN_CHANNEL: Add bot as Admin with -100)", show_alert=True)
+                    return
+                except Exception:
+                    pass
+                await query.answer("⚠️ Telegram: [400 CHAT_ID_INVALID]\nBot is not an Admin in channel!\n\n1. Channel ID must start with -100\n2. Add bot as Admin in that channel.", show_alert=True)
+            elif "BUTTON_URL_INVALID" in err_msg:
+                try:
+                    await client.send_cached_media(
+                        chat_id=query.from_user.id,
+                        file_id=file_id,
+                        caption="✅ <b>Here is your file directly!</b>\n\n⚠️ <i>BUTTON_URL_INVALID: Set FQDN=your-bot.onrender.com in .env so Telegram can build valid stream links!</i>"
+                    )
+                    await query.answer("⚠️ Telegram: [400 BUTTON_URL_INVALID]\nSet FQDN in your .env!\nFile sent directly to your PM.", show_alert=True)
+                    return
+                except Exception:
+                    pass
+                await query.answer("⚠️ [400 BUTTON_URL_INVALID]\nSet FQDN=your-bot.onrender.com in .env", show_alert=True)
+            else:
+                await query.answer(f"⚠️ Stream link issue:\n{e}", show_alert=True)
             return
 
 
